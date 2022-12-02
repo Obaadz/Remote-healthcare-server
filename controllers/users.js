@@ -1,83 +1,101 @@
 import Users from "../models/user.js";
 import Devices from "../models/device.js";
 
-// export const checkUserValidation = async (request, response) => {
-//   const device = await Devices.findOne({ deviceId: request.query.deviceId });
-
-//   const user = await Users.findOne({
-//     device,
-//     password: request.query.password,
-//   })
-//     .select("-password -__v")
-//     .populate("device", "-deviceId -_id");
-
-//   if (user)
-//     response.send({
-//       message: "user validation successed",
-//       isUserValid: true,
-//       data: { user },
-//     });
-//   else response.send({ message: "user validation failed", isUserValid: false });
-// };
-
-export const checkUserValidation = async (deviceId, password) => {
+export const checkUserValidation = async (device, password) => {
   const isDataValid = await Users.exists({
     password,
-    "device.deviceId": deviceId,
+    device,
   });
 
   return isDataValid ? true : false;
 };
 
 export const getUserData = async (request, response) => {
-  const isUserExist = await checkUserValidation(
-    request.query.deviceId,
-    request.query.password
-  );
+  const device = await Devices.exists({ deviceId: request.body.deviceId });
+
+  const isUserExist = await checkUserValidation(device, request.body.password);
 
   if (!isUserExist) {
-    response.send({ message: "user validation failed", isSuccess: false });
+    failed();
     return;
   }
 
-  const device = await Devices.findOne({ deviceId: request.query.deviceId });
-
-  const user = await Users.findOne({
+  await Users.findOne({
     device,
-    password: request.query.password,
+    password: request.body.password,
   })
     .select("-password -__v")
-    .populate("device", "-_id");
+    .populate("device", "-_id")
+    .then((user) => successed(user))
+    .catch((err) => failed(err.message));
 
-  response.send({
-    message: "user validation successed",
-    isSuccess: true,
-    data: { user },
+  function successed(user) {
+    response.send({
+      message: "user validation successed",
+      isSuccess: true,
+      data: { user },
+    });
+  }
+
+  function failed(errorMessage) {
+    response.send({
+      message: `user validation failed: ${
+        errorMessage ? errorMessage : "deviceId or password is incorrect"
+      }`,
+      isSuccess: false,
+    });
+  }
+};
+
+export const checkDeviceValidation = async (deviceId) => {
+  const isDataValid = await Devices.exists({
+    deviceId,
   });
+
+  return isDataValid ? true : false;
 };
 
 export const insertUser = async (request, response) => {
-  const responseBody = {
-    message: "user inserting successed",
-    isSuccess: true,
-  };
+  const isDeviceExist = await checkDeviceValidation(request.body.deviceId);
 
-  const device = await Devices.findOne({ deviceId: request.body.deviceId });
+  if (!isDeviceExist) {
+    response.send({
+      message: "user inserting failed: deviceId is not exist",
+      isSuccess: false,
+    });
+
+    return;
+  }
+
+  const device = await Devices.exists({ deviceId: request.body.deviceId });
 
   const user = new Users({
     username: request.body.username,
     gender: request.body.gender,
-    device: device,
+    device,
     password: request.body.password,
   });
 
-  await user.save().catch((err) => {
-    responseBody.message = `user inserting failed: ${err.message}`;
-    responseBody.isSuccess = false;
+  await user
+    .save()
+    .then(() => successed())
+    .catch((err) => failed(err));
 
-    console.log(err.message);
-  });
+  function successed() {
+    response.status(201).send({
+      message: "user inserting successed",
+      isSuccess: true,
+    });
+  }
 
-  if (responseBody.isSuccess) response.status(201).send(responseBody);
-  else response.send(responseBody);
+  function failed(err) {
+    response.send({
+      message: `user inserting failed: ${
+        err.message.includes("duplicate")
+          ? "patient already registerd"
+          : err.message
+      }`,
+      isSuccess: false,
+    });
+  }
 };
