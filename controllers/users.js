@@ -9,12 +9,16 @@ export const checkUserValidation = async (request, response) => {
     ? true
     : false;
 
-  if (isUserValid) response.send({ message: "user validation successed" });
-  else response.send({ message: "user validation failed" });
+  if (isUserValid)
+    response.send({ message: "user validation successed", isSuccess });
+  else response.send({ message: "user validation failed", isSuccess });
 };
 
 export const insertUser = async (request, response) => {
-  let isSuccess = true;
+  const responseBody = {
+    message: "user inserting successed",
+    isSuccess: true,
+  };
 
   const device = await Devices.findOne({ deviceId: request.body.deviceId });
 
@@ -25,11 +29,12 @@ export const insertUser = async (request, response) => {
   });
 
   await user.save().catch((err) => {
-    isSuccess = false;
+    responseBody.message = `user inserting failed: ${err.message}`;
+    responseBody.isSuccess = false;
+
     console.log(err.message);
   });
 
-  if (isSuccess)
-    response.status(201).send({ message: "user inserting successed" });
-  else response.send({ message: "user inserting failed" });
+  if (responseBody.isSuccess) response.status(201).send(responseBody);
+  else response.send(responseBody);
 };
