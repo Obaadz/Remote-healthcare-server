@@ -2,16 +2,18 @@ import Users from "../models/user.js";
 import Devices from "../models/device.js";
 
 export const checkUserValidation = async (request, response) => {
+  const device = await Devices.findOne({ deviceId: request.query.deviceId });
+
   const isUserValid = (await Users.exists({
-    username: request.query.username,
+    device,
     password: request.query.password,
   }))
     ? true
     : false;
 
   if (isUserValid)
-    response.send({ message: "user validation successed", isSuccess });
-  else response.send({ message: "user validation failed", isSuccess });
+    response.send({ message: "user validation successed", isUserValid });
+  else response.send({ message: "user validation failed", isUserValid });
 };
 
 export const insertUser = async (request, response) => {
