@@ -1,6 +1,18 @@
 import Users from "../models/user.js";
 import Devices from "../models/device.js";
 
+export const checkUserValidation = async (request, response) => {
+  const isUserValid = (await Users.exists({
+    username: request.query.username,
+    password: request.query.password,
+  }))
+    ? true
+    : false;
+
+  if (isUserValid) response.send({ message: "user validation successed" });
+  else response.send({ message: "user validation failed" });
+};
+
 export const insertUser = async (request, response) => {
   let isSuccess = true;
 

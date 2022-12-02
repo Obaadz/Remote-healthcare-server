@@ -1,8 +1,8 @@
 import express from "express";
-import { insertUser } from "../../controllers/users.js";
+import { checkUserValidation, insertUser } from "../../controllers/users.js";
 
 const usersRoutes = express.Router();
 
-usersRoutes.route("/users").post(insertUser);
+usersRoutes.route("/users").get(checkUserValidation).post(insertUser);
 
 export default usersRoutes;
