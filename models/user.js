@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  phone_number: {
+    type: String,
+    required: true,
+  },
   device: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

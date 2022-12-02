@@ -72,6 +72,7 @@ export const insertUser = async (request, response) => {
   const user = new Users({
     username: request.body.username,
     gender: request.body.gender,
+    phone_number: request.body.phone_number,
     device,
     password: request.body.password,
   });
