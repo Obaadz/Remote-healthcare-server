@@ -1,19 +1,59 @@
 import Users from "../models/user.js";
 import Devices from "../models/device.js";
 
-export const checkUserValidation = async (request, response) => {
+// export const checkUserValidation = async (request, response) => {
+//   const device = await Devices.findOne({ deviceId: request.query.deviceId });
+
+//   const user = await Users.findOne({
+//     device,
+//     password: request.query.password,
+//   })
+//     .select("-password -__v")
+//     .populate("device", "-deviceId -_id");
+
+//   if (user)
+//     response.send({
+//       message: "user validation successed",
+//       isUserValid: true,
+//       data: { user },
+//     });
+//   else response.send({ message: "user validation failed", isUserValid: false });
+// };
+
+export const checkUserValidation = async (deviceId, password) => {
+  const isDataValid = await Users.exists({
+    password,
+    "device.deviceId": deviceId,
+  });
+
+  return isDataValid ? true : false;
+};
+
+export const getUserData = async (request, response) => {
+  const isUserExist = await checkUserValidation(
+    request.query.deviceId,
+    request.query.password
+  );
+
+  if (!isUserExist) {
+    response.send({ message: "user validation failed", isSuccess: false });
+    return;
+  }
+
   const device = await Devices.findOne({ deviceId: request.query.deviceId });
 
-  const isUserValid = (await Users.exists({
+  const user = await Users.findOne({
     device,
     password: request.query.password,
-  }))
-    ? true
-    : false;
+  })
+    .select("-password -__v")
+    .populate("device", "-_id");
 
-  if (isUserValid)
-    response.send({ message: "user validation successed", isUserValid });
-  else response.send({ message: "user validation failed", isUserValid });
+  response.send({
+    message: "user validation successed",
+    isSuccess: true,
+    data: { user },
+  });
 };
 
 export const insertUser = async (request, response) => {
@@ -26,6 +66,7 @@ export const insertUser = async (request, response) => {
 
   const user = new Users({
     username: request.body.username,
+    gender: request.body.gender,
     device: device,
     password: request.body.password,
   });
