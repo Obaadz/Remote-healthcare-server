@@ -1,5 +1,6 @@
 import Users from "../models/user.js";
 import Devices from "../models/device.js";
+import { checkDeviceValidation } from "./devices.js";
 
 export const checkUserValidation = async (device, password) => {
   const isDataValid = await Users.exists({
@@ -47,14 +48,6 @@ export const getUserData = async (request, response) => {
       isSuccess: false,
     });
   }
-};
-
-export const checkDeviceValidation = async (deviceId) => {
-  const isDataValid = await Devices.exists({
-    deviceId,
-  });
-
-  return isDataValid ? true : false;
 };
 
 export const insertUser = async (request, response) => {
