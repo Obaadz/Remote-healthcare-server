@@ -3,8 +3,8 @@ import Devices from "../models/device.js";
 
 export const checkUserValidation = async (device, password) => {
   const isDataValid = await Users.exists({
-    password,
     device,
+    password,
   });
 
   return isDataValid ? true : false;
@@ -14,6 +14,8 @@ export const getUserData = async (request, response) => {
   const device = await Devices.exists({ deviceId: request.body.deviceId });
 
   const isUserExist = await checkUserValidation(device, request.body.password);
+
+  console.log(request.body);
 
   if (!isUserExist) {
     failed();
