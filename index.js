@@ -18,7 +18,7 @@ app.use(cors());
 
 app.use(v1Routes);
 
-mongoose
+await mongoose
   .connect(process.env.DB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,

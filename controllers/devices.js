@@ -30,14 +30,21 @@ export const updateFields = async (request, response) => {
     .catch((err) => failed(err.message));
 
   function successed() {
+    pusher
+      .trigger(`user-${request.body.deviceId}`, "user-data-changed", {
+        message: "receiving new device data",
+        ...request.body.dataToUpdate,
+      })
+      .then(() => {
+        console.log("MESSAGE SENTED TO MOBILE APP");
+      })
+      .catch((err) => {
+        console.log("ERROR ON PUSHER: ", err.message);
+      });
+
     response.send({
       message: "update successed",
       isSuccess: true,
-    });
-
-    pusher.trigger(`user-${request.body.deviceId}`, "user-data-changed", {
-      message: "receiving new device data",
-      data: request.body.dataToUpdate,
     });
   }
 
