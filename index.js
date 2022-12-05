@@ -25,13 +25,12 @@ await mongoose
   })
   .then(() => {
     console.log("Database connected!");
-
-    app.listen(PORT, () => {
-      console.log(`server listening on port ${PORT}`);
-    });
   })
   .catch((err) => {
     console.log("ERROR while connecting to the database");
   });
 
+app.listen(PORT, () => {
+  console.log(`Listening on port: ${PORT}`);
+});
 export default app;

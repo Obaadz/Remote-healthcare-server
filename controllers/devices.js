@@ -14,7 +14,7 @@ export const updateFields = async (request, response) => {
       request.body.deviceId
     )),
     isDataToUpdateNotExist = !(
-      request.body.dataToUpdate.spo2 || request.body.dataToUpdate.healthrate
+      request.body.dataToUpdate.spo2 || request.body.dataToUpdate.heartRate
     );
 
   if (isDeviceNotExist || isDataToUpdateNotExist) {
@@ -36,16 +36,21 @@ export const updateFields = async (request, response) => {
         ...request.body.dataToUpdate,
       })
       .then(() => {
-        console.log("MESSAGE SENTED TO MOBILE APP");
+        console.log("DATA SENTED TO MOBILE APP");
+
+        response.send({
+          message: "update successed",
+          isSuccess: true,
+        });
       })
       .catch((err) => {
         console.log("ERROR ON PUSHER: ", err.message);
-      });
 
-    response.send({
-      message: "update successed",
-      isSuccess: true,
-    });
+        response.send({
+          message: `update successed but send new data to client has been failed: ${err.message}`,
+          isSuccess: false,
+        });
+      });
   }
 
   function failed(errorMessage) {
@@ -58,6 +63,8 @@ export const updateFields = async (request, response) => {
       isSuccess: false,
     });
   }
+
+  function sendDataToClient() {}
 };
 
 // Utils functions for devices collection:
