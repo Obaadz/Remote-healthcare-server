@@ -10,6 +10,8 @@ const pusher = new Pusher({
 });
 
 export const updateFields = async (request, response) => {
+  console.log(request.body);
+
   const isDeviceNotExist = !(await checkDeviceValidation(
       request.body.deviceId
     )),
@@ -63,8 +65,6 @@ export const updateFields = async (request, response) => {
       isSuccess: false,
     });
   }
-
-  function sendDataToClient() {}
 };
 
 // Utils functions for devices collection:
