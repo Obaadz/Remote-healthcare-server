@@ -19,7 +19,8 @@ export const getUserData = async (request, response) => {
   console.log(request.body);
 
   if (!isUserExist) {
-    failed();
+    await failed();
+
     return;
   }
 
@@ -40,8 +41,8 @@ export const getUserData = async (request, response) => {
     });
   }
 
-  function failed(errorMessage) {
-    response.send({
+  async function failed(errorMessage) {
+    await response.send({
       message: `user validation failed: ${
         errorMessage ? errorMessage : "deviceId or password is incorrect"
       }`,
@@ -53,11 +54,10 @@ export const getUserData = async (request, response) => {
 export const insertUser = async (request, response) => {
   const isDeviceExist = await checkDeviceValidation(request.body.deviceId);
 
+  console.log(request.body);
+
   if (!isDeviceExist) {
-    response.send({
-      message: "user inserting failed: deviceId is not exist",
-      isSuccess: false,
-    });
+    await failed("deviceId is not exist");
 
     return;
   }
@@ -75,7 +75,7 @@ export const insertUser = async (request, response) => {
   await user
     .save()
     .then(() => successed())
-    .catch((err) => failed(err));
+    .catch((err) => failed(err.message));
 
   function successed() {
     response.status(201).send({
@@ -84,12 +84,12 @@ export const insertUser = async (request, response) => {
     });
   }
 
-  function failed(err) {
-    response.send({
+  async function failed(errMessage) {
+    await response.send({
       message: `user inserting failed: ${
-        err.message.includes("duplicate")
+        errMessage.includes("duplicate")
           ? "patient already registerd"
-          : err.message
+          : errMessage
       }`,
       isSuccess: false,
     });
