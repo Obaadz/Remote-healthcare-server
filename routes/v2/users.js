@@ -41,6 +41,8 @@ patientsRoutes.post("/users/patients/signup", async (request, response) => {
 patientsRoutes.post("/users/patients/signin", async (request, response) => {
   const patient = request.body;
 
+  console.log(patient);
+
   const isDeviceExist = await checkDeviceValidation(patient.deviceId);
   if (!isDeviceExist) {
     failed("deviceId is not exist");
