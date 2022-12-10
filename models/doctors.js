@@ -7,6 +7,7 @@ const doctorSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
+    lowercase: true,
     required: true,
     trim: true,
   },

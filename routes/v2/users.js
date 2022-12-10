@@ -1,8 +1,10 @@
 import express from "express";
 import { checkDeviceValidation } from "../../controllers/devices.js";
+import { insertDoctor, getDoctor } from "../../controllers/doctors.js";
 import { getPatient, insertPatient } from "../../controllers/patients.js";
 
 const patientsRoutes = express.Router();
+const doctorsRoutes = express.Router();
 
 patientsRoutes.post("/users/patients/signup", async (request, response) => {
   const patient = request.body;
@@ -66,4 +68,54 @@ patientsRoutes.post("/users/patients/signin", async (request, response) => {
   }
 });
 
-export { patientsRoutes };
+doctorsRoutes.post("/users/doctors/signup", async (request, response) => {
+  const doctor = request.body;
+
+  const { isSuccess, errMessage } = await insertDoctor(doctor);
+
+  if (isSuccess) successed();
+  else failed(errMessage);
+
+  function successed() {
+    response.status(201).send({
+      message: "doctor signup successed",
+      isSuccess: true,
+    });
+  }
+
+  function failed(errMessage = "") {
+    response.send({
+      message: `doctor signup failed: ${
+        errMessage.includes("duplicate")
+          ? "doctor already registerd"
+          : errMessage
+      }`,
+      isSuccess: false,
+    });
+  }
+});
+doctorsRoutes.post("/users/doctors/signin", async (request, response) => {
+  const doctor = request.body;
+
+  const { isSuccess, errMessage, data } = await getDoctor(doctor);
+
+  if (isSuccess) successed(data);
+  else failed(errMessage);
+
+  function successed(data) {
+    response.send({
+      message: "doctor signin successed",
+      isSuccess: true,
+      data,
+    });
+  }
+
+  function failed(errMessage = "") {
+    response.send({
+      message: `doctor signin failed: ${errMessage}`,
+      isSuccess: false,
+    });
+  }
+});
+
+export { patientsRoutes, doctorsRoutes };

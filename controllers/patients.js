@@ -11,7 +11,7 @@ export const insertPatient = async (patientData) => {
     password: patientData.password,
     age: patientData.age,
     gender: patientData.gender,
-    phoneNumber: patientData.phone_number,
+    phoneNumber: patientData.phoneNumber,
     device: deviceObjectId,
   });
 
