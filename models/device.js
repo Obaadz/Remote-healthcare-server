@@ -11,6 +11,11 @@ export const deviceSchema = new mongoose.Schema({
   },
   spo2: Number,
   heartRate: Number,
+  temperature: Number,
+  lastUpdate: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 const Devices = mongoose.model("Devices", deviceSchema);

@@ -1,13 +1,5 @@
+import { pusher } from "../index.js";
 import Devices from "../models/device.js";
-import Pusher from "pusher";
-
-const pusher = new Pusher({
-  appId: "1519353",
-  key: "17e704d4e34a2978834b",
-  secret: "59ad5f82551a87b7678c",
-  cluster: "eu",
-  useTLS: true,
-});
 
 export const updateFields = async (request, response) => {
   console.log(request.body);
@@ -65,6 +57,17 @@ export const updateFields = async (request, response) => {
       isSuccess: false,
     });
   }
+};
+
+export const updateDevice = async (deviceData) => {
+  const [isSuccess, errMessage] = await Devices.updateOne(
+    { deviceId: deviceData.deviceId },
+    { ...deviceData.dataToUpdate, lastUpdate: Date.now() }
+  )
+    .then(() => [true, ""])
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage };
 };
 
 // Utils functions for devices collection:

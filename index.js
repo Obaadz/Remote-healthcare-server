@@ -2,7 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import v1Routes from "./routes/v1/index.js";
+import v2Routes from "./routes/v2/index.js";
 import "dotenv/config";
+import Pusher from "pusher";
 
 const PORT = process.env.PORT || 5000;
 
@@ -17,6 +19,15 @@ app.use(bodyParser.json);
 app.use(cors());
 
 app.use(v1Routes);
+app.use(v2Routes);
+
+export const pusher = new Pusher({
+  appId: "1519353",
+  key: "17e704d4e34a2978834b",
+  secret: "59ad5f82551a87b7678c",
+  cluster: "eu",
+  useTLS: true,
+});
 
 await mongoose
   .connect(process.env.DB_URI, {

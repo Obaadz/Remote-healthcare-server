@@ -1,0 +1,36 @@
+import mongoose from "mongoose";
+
+const patientSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  age: {
+    type: Number,
+    required: true,
+  },
+  device: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    unique: true,
+    ref: "Devices",
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+});
+
+const Patients = mongoose.model("Patients", patientSchema);
+
+export default Patients;
