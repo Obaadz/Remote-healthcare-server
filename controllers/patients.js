@@ -1,5 +1,5 @@
 import Devices from "../models/device.js";
-import Patients from "../models/patients.js";
+import Patients from "../models/patient.js";
 
 export const insertPatient = async (patientData) => {
   const deviceObjectId = await Devices.exists({

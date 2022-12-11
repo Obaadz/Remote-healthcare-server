@@ -1,5 +1,5 @@
-import Doctors from "../models/doctors.js";
-import Patients from "../models/patients.js";
+import Doctors from "../models/doctor.js";
+import Patients from "../models/patient.js";
 
 export const insertDoctor = async (doctorData) => {
   const Doctor = new Doctors({
