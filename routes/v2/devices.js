@@ -26,8 +26,8 @@ devicesRoutes.put("/devices/update", async (request, response) => {
     return;
   }
 
-  handleTemperature();
-  console.log("DEVICE AFTER HANDLE TEMPERATURE", device);
+  // handleTemperature();
+  console.log("DEVICE DATA TO UPDATE: ", device);
   const { isSuccess, errMessage } = await updateDevice(device);
 
   if (isSuccess) successed();
@@ -77,9 +77,10 @@ devicesRoutes.put("/devices/update", async (request, response) => {
   }
 
   function checkDataToUpdateExist(dataToUpdate) {
-    const { spo2, heartRate, temperature } = dataToUpdate;
+    const { spo2, heartRate, temperature, fall } = dataToUpdate;
 
-    if (spo2 || heartRate || temperature) return true;
+    if (spo2 || heartRate || temperature || fall == true || fall == false)
+      return true;
 
     return false;
   }

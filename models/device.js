@@ -12,6 +12,10 @@ export const deviceSchema = new mongoose.Schema({
   spo2: Number,
   heartRate: Number,
   temperature: Number,
+  fall: {
+    type: Boolean,
+    default: false,
+  },
   lastUpdate: {
     type: Date,
     default: Date.now(),
