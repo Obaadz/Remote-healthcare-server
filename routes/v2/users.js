@@ -1,6 +1,10 @@
 import express from "express";
 import { checkDeviceValidation } from "../../controllers/devices.js";
-import { insertDoctor, getDoctor } from "../../controllers/doctors.js";
+import {
+  insertDoctor,
+  getDoctor,
+  insertPatientToDoctor,
+} from "../../controllers/doctors.js";
 import { getPatient, insertPatient } from "../../controllers/patients.js";
 
 const patientsRoutes = express.Router();
@@ -99,8 +103,8 @@ doctorsRoutes.post("/users/doctors/signup", async (request, response) => {
 doctorsRoutes.post("/users/doctors/signin", async (request, response) => {
   const doctor = request.body;
 
+  await insertPatientToDoctor({ deviceId: "123456789011" }, doctor);
   const { isSuccess, errMessage, data } = await getDoctor(doctor);
-
   if (isSuccess) successed(data);
   else failed(errMessage);
 

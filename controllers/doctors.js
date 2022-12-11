@@ -1,4 +1,5 @@
 import Doctors from "../models/doctors.js";
+import Patients from "../models/patients.js";
 
 export const insertDoctor = async (doctorData) => {
   const Doctor = new Doctors({
@@ -23,6 +24,7 @@ export const getDoctor = async (doctorData) => {
     password: doctorData.password,
   })
     .select("-password -__v")
+    .populate("patients", "-_id -password -device -__v")
     .then((doctor) => {
       if (doctor) return [true, "", { doctor }];
 
@@ -31,4 +33,18 @@ export const getDoctor = async (doctorData) => {
     .catch((err) => [false, err.message]);
 
   return { isSuccess, errMessage, data };
+};
+
+export const insertPatientToDoctor = async (patient, doctorData) => {
+  const patientObjectId = await Patients.exists({
+    deviceId: patient.deviceId,
+  });
+
+  const [isSuccess, errMessage] = await Doctors.updateOne(doctorData, {
+    $addToSet: { patients: patientObjectId },
+  })
+    .then(() => [true, ""])
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage };
 };
