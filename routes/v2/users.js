@@ -1,11 +1,15 @@
 import express from "express";
 import { checkDeviceValidation } from "../../controllers/devices.js";
 import {
-  insertDoctor,
   getDoctor,
+  insertDoctor,
   insertPatientToDoctor,
 } from "../../controllers/doctors.js";
-import { getPatient, insertPatient } from "../../controllers/patients.js";
+import {
+  getPatient,
+  insertPatient,
+  searchPatientWithDeviceId,
+} from "../../controllers/patients.js";
 
 const patientsRoutes = express.Router();
 const doctorsRoutes = express.Router();
@@ -69,6 +73,34 @@ patientsRoutes.post("/users/patients/signin", async (request, response) => {
   function failed(errMessage = "") {
     response.send({
       message: `patient signin failed: ${errMessage}`,
+      isSuccess: false,
+    });
+  }
+});
+
+patientsRoutes.get("/users/patients", async (request, response) => {
+  const patient = request.query;
+
+  console.log(patient);
+
+  const { isSuccess, errMessage, data } = await searchPatientWithDeviceId(
+    patient.deviceId
+  );
+
+  if (isSuccess) successed(data);
+  else failed(errMessage);
+
+  function successed(data) {
+    response.send({
+      message: "patient search successed",
+      isSuccess: true,
+      data,
+    });
+  }
+
+  function failed(errMessage = "") {
+    response.send({
+      message: `patient search failed: ${errMessage}`,
       isSuccess: false,
     });
   }
