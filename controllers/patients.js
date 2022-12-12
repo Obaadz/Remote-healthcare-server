@@ -23,8 +23,12 @@ export const insertPatient = async (patientData) => {
 };
 
 export const getPatient = async (patientData) => {
-  const [isSuccess, errMessage, data] = await Patients.findOne({
+  const deviceObjectId = await Devices.exists({
     deviceId: patientData.deviceId,
+  });
+
+  const [isSuccess, errMessage, data] = await Patients.findOne({
+    device: deviceObjectId,
     password: patientData.password,
   })
     .select("-password -__v")
