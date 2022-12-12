@@ -45,7 +45,7 @@ export const getPatient = async (patientData) => {
 
 export const searchPatientWithDeviceId = async (deviceId) => {
   const deviceObjectId = await Devices.find({
-    deviceId: new RegExp(`${deviceId}*`),
+    deviceId: deviceId ? new RegExp(`^${deviceId}`) : deviceId,
   });
 
   const [isSuccess, errMessage, data] = await Patients.find({
@@ -53,11 +53,7 @@ export const searchPatientWithDeviceId = async (deviceId) => {
   })
     .select("-password -__v")
     .populate("device", "-_id deviceId")
-    .then((patients) => {
-      if (patients) return [true, "", { patients }];
-
-      return [false, "deviceId is incorrect", { patients: [] }];
-    })
+    .then((patients) => [true, "", { patients }])
     .catch((err) => [false, err.message, { patients: [] }]);
 
   return { isSuccess, errMessage, data };
