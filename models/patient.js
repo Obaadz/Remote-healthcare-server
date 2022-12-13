@@ -27,7 +27,6 @@ export const patientSchema = new mongoose.Schema({
   },
   doctorsRequests: {
     type: [mongoose.Schema.Types.ObjectId],
-    unique: true,
     ref: "Doctors",
     default: [],
   },

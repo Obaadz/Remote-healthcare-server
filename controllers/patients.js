@@ -62,10 +62,7 @@ export const searchPatientsByDeviceId = async (deviceId) => {
 };
 
 // It return array of patients who don't already added by this doctor email
-export const filterPatientsAlreadyAddedByDoctorEmail = async (
-  patients,
-  doctorEmail
-) => {
+export const filterPatientsAlreadyAddedByDoctorEmail = async (patients, doctorEmail) => {
   const doctorPatientsObjectIds = (await Doctors.findOne({ email: doctorEmail }))
     ?.patients;
 
