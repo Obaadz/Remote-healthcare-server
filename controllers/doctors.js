@@ -37,14 +37,18 @@ export const getDoctor = async (doctorData) => {
   return { isSuccess, errMessage, data };
 };
 
-export const insertPatientToDoctor = async (patient, doctorData) => {
-  const patientObjectId = await Patients.exists({
-    deviceId: patient.deviceId,
+export const addPatientToDoctorByDoctorEmail = async (doctorEmail, deviceId) => {
+  const patientDevice = await getDeviceByDeviceId(deviceId);
+  const patient = await Patients.exists({
+    device: patientDevice._id,
   });
 
-  const [isSuccess, errMessage] = await Doctors.updateOne(doctorData, {
-    $addToSet: { patients: patientObjectId },
-  })
+  const [isSuccess, errMessage] = await Doctors.updateOne(
+    { email: doctorEmail },
+    {
+      $addToSet: { patients: patient._id },
+    }
+  )
     .then(() => [true, ""])
     .catch((err) => [false, err.message]);
 

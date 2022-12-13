@@ -1,11 +1,11 @@
 import express from "express";
 import { checkDeviceValidation } from "../../controllers/devices.js";
 import {
-  cancelRequestToPatientByDoctorEmail,
   getDoctor,
   insertDoctor,
-  insertPatientToDoctor,
+  addPatientToDoctorByDoctorEmail,
   sendRequestToPatientByDoctorEmail,
+  cancelRequestToPatientByDoctorEmail,
 } from "../../controllers/doctors.js";
 import {
   getPatient,
@@ -147,8 +147,8 @@ doctorsRoutes.post("/users/doctors/signup", async (request, response) => {
 doctorsRoutes.post("/users/doctors/signin", async (request, response) => {
   const doctor = request.body;
 
-  await insertPatientToDoctor({ deviceId: "123456789011" }, doctor);
   const { isSuccess, errMessage, data } = await getDoctor(doctor);
+
   if (isSuccess) successed(data);
   else failed(errMessage);
 
