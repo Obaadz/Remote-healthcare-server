@@ -1,6 +1,7 @@
 import Devices from "../models/device.js";
 import Doctors from "../models/doctor.js";
 import Patients from "../models/patient.js";
+import { getDeviceByDeviceId } from "./devices.js";
 
 export const insertDoctor = async (doctorData) => {
   const Doctor = new Doctors({
@@ -52,10 +53,10 @@ export const insertPatientToDoctor = async (patient, doctorData) => {
 
 export const sendRequestToPatientByDoctorEmail = async (doctorEmail, deviceId) => {
   const doctor = await Doctors.exists({ email: doctorEmail });
-  const device = await Devices.exists({ deviceId });
+  const patientDevice = await getDeviceByDeviceId(deviceId);
 
   const [isSuccess, errMessage] = await Patients.updateOne(
-    { device: device._id },
+    { device: patientDevice._id },
     {
       $addToSet: { doctorsRequests: doctor._id },
     }
@@ -68,10 +69,10 @@ export const sendRequestToPatientByDoctorEmail = async (doctorEmail, deviceId) =
 
 export const cancelRequestToPatientByDoctorEmail = async (doctorEmail, deviceId) => {
   const doctor = await Doctors.exists({ email: doctorEmail });
-  const device = await Devices.exists({ deviceId });
+  const patientDevice = await getDeviceByDeviceId(deviceId);
 
   const [isSuccess, errMessage] = await Patients.updateOne(
-    { device: device._id },
+    { device: patientDevice._id },
     {
       $pull: { doctorsRequests: doctor._id },
     }

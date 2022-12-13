@@ -4,9 +4,7 @@ import Devices from "../models/device.js";
 export const updateFields = async (request, response) => {
   console.log(request.body);
 
-  const isDeviceNotExist = !(await checkDeviceValidation(
-      request.body.deviceId
-    )),
+  const isDeviceNotExist = !(await checkDeviceValidation(request.body.deviceId)),
     isDataToUpdateNotExist = !(
       request.body.dataToUpdate.spo2 || request.body.dataToUpdate.heartRate
     );
@@ -16,10 +14,7 @@ export const updateFields = async (request, response) => {
     return;
   }
 
-  await Devices.updateOne(
-    { deviceId: request.body.deviceId },
-    request.body.dataToUpdate
-  )
+  await Devices.updateOne({ deviceId: request.body.deviceId }, request.body.dataToUpdate)
     .then(() => successed())
     .catch((err) => failed(err.message));
 
@@ -50,9 +45,7 @@ export const updateFields = async (request, response) => {
   function failed(errorMessage) {
     response.send({
       message: `update failed: ${
-        errorMessage
-          ? errorMessage
-          : "deviceId or data to be updated is incorrect"
+        errorMessage ? errorMessage : "deviceId or data to be updated is incorrect"
       }`,
       isSuccess: false,
     });
@@ -77,4 +70,10 @@ export const checkDeviceValidation = async (deviceId) => {
   });
 
   return isDataValid ? true : false;
+};
+
+export const getDeviceByDeviceId = async (deviceId) => {
+  const device = await Devices.findOne({ deviceId });
+
+  return device;
 };

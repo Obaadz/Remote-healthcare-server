@@ -1,11 +1,10 @@
 import Devices from "../models/device.js";
 import Doctors from "../models/doctor.js";
 import Patients from "../models/patient.js";
+import { getDeviceByDeviceId } from "./devices.js";
 
 export const insertPatient = async (patientData) => {
-  const deviceObjectId = await Devices.exists({
-    deviceId: patientData.deviceId,
-  });
+  const patientDevice = await getDeviceByDeviceId(patientData.deviceId);
 
   const Patient = new Patients({
     username: patientData.username,
@@ -13,7 +12,7 @@ export const insertPatient = async (patientData) => {
     age: patientData.age,
     gender: patientData.gender,
     phoneNumber: patientData.phoneNumber,
-    device: deviceObjectId,
+    device: patientDevice._id,
   });
 
   const [isSuccess, errMessage] = await Patient.save()
@@ -24,12 +23,10 @@ export const insertPatient = async (patientData) => {
 };
 
 export const getPatient = async (patientData) => {
-  const deviceObjectId = await Devices.exists({
-    deviceId: patientData.deviceId,
-  });
+  const patientDevice = await getDeviceByDeviceId(patientData.deviceId);
 
   const [isSuccess, errMessage, data] = await Patients.findOne({
-    device: deviceObjectId,
+    device: patientDevice._id,
     password: patientData.password,
   })
     .select("-password -__v")
