@@ -54,6 +54,7 @@ export const searchPatientsByDeviceId = async (deviceId) => {
   })
     .select("-password -__v")
     .populate("device", "-_id deviceId")
+    .populate("doctorsRequests", "-_id email")
     .then((patients) => [true, "", { patients }])
     .catch((err) => [false, err.message, { patients: [] }]);
 
@@ -65,9 +66,8 @@ export const filterPatientsAlreadyAddedByDoctorEmail = async (
   patients,
   doctorEmail
 ) => {
-  const doctorPatientsObjectIds = (
-    await Doctors.findOne({ email: doctorEmail })
-  )?.patients;
+  const doctorPatientsObjectIds = (await Doctors.findOne({ email: doctorEmail }))
+    ?.patients;
 
   const [isSuccess, errMessage, data] = await Patients.find({
     _id: {
@@ -77,6 +77,7 @@ export const filterPatientsAlreadyAddedByDoctorEmail = async (
   })
     .select("-password -__v")
     .populate("device", "-_id deviceId")
+    .populate("doctorsRequests", "-_id email")
     .then((filterdPatients) => [true, "", { patients: filterdPatients }])
     .catch((err) => [false, err.message, { patients: [] }]);
 
