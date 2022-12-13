@@ -51,13 +51,29 @@ export const insertPatientToDoctor = async (patient, doctorData) => {
 };
 
 export const sendRequestToPatientByDoctorEmail = async (doctorEmail, deviceId) => {
-  const doctorObjectId = await Doctors.exists({ email: doctorEmail });
-  const deviceObjectId = await Devices.exists({ deviceId });
+  const doctor = await Doctors.exists({ email: doctorEmail });
+  const device = await Devices.exists({ deviceId });
 
   const [isSuccess, errMessage] = await Patients.updateOne(
-    { device: deviceObjectId },
+    { device: device._id },
     {
-      $addToSet: { doctorsRequests: doctorObjectId },
+      $addToSet: { doctorsRequests: doctor._id },
+    }
+  )
+    .then(() => [true, ""])
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage };
+};
+
+export const cancelRequestToPatientByDoctorEmail = async (doctorEmail, deviceId) => {
+  const doctor = await Doctors.exists({ email: doctorEmail });
+  const device = await Devices.exists({ deviceId });
+
+  const [isSuccess, errMessage] = await Patients.updateOne(
+    { device: device._id },
+    {
+      $pull: { doctorsRequests: doctor._id },
     }
   )
     .then(() => [true, ""])

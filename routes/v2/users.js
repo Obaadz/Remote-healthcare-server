@@ -1,6 +1,7 @@
 import express from "express";
 import { checkDeviceValidation } from "../../controllers/devices.js";
 import {
+  cancelRequestToPatientByDoctorEmail,
   getDoctor,
   insertDoctor,
   insertPatientToDoctor,
@@ -83,9 +84,7 @@ patientsRoutes.get("/users/patients", async (request, response) => {
 
   console.log(query);
 
-  const { isSuccess, errMessage, data } = await searchPatientsByDeviceId(
-    query.deviceId
-  );
+  const { isSuccess, errMessage, data } = await searchPatientsByDeviceId(query.deviceId);
 
   // If search is success then if there is a query with doctor email, filter(or remove) the patients already added with that email
   if (isSuccess) {
@@ -94,10 +93,7 @@ patientsRoutes.get("/users/patients", async (request, response) => {
         isSuccess: isFilteredSuccess,
         errMessage,
         data: filterdData,
-      } = await filterPatientsAlreadyAddedByDoctorEmail(
-        data.patients,
-        query.doctorEmail
-      );
+      } = await filterPatientsAlreadyAddedByDoctorEmail(data.patients, query.doctorEmail);
 
       if (isFilteredSuccess) successed(filterdData);
       else failed(errMessage);
@@ -175,6 +171,12 @@ doctorsRoutes.post("/users/doctors/signin", async (request, response) => {
 doctorsRoutes.put("/users/doctors/request_patient", async (request, response) => {
   const requestData = request.body;
 
+  const isDeviceExist = await checkDeviceValidation(requestData.deviceId);
+  if (!isDeviceExist) {
+    failed("deviceId is not exist");
+    return;
+  }
+
   console.log(requestData);
 
   const { isSuccess, errMessage } = await sendRequestToPatientByDoctorEmail(
@@ -201,4 +203,38 @@ doctorsRoutes.put("/users/doctors/request_patient", async (request, response) =>
   }
 });
 
+doctorsRoutes.put("/users/doctors/request_patient/cancel", async (request, response) => {
+  const requestData = request.body;
+
+  const isDeviceExist = await checkDeviceValidation(requestData.deviceId);
+  if (!isDeviceExist) {
+    failed("deviceId is not exist");
+    return;
+  }
+
+  console.log(requestData);
+
+  const { isSuccess, errMessage } = await cancelRequestToPatientByDoctorEmail(
+    requestData.doctorEmail,
+    requestData.deviceId
+  );
+
+  if (isSuccess) {
+    successed();
+  } else failed(errMessage);
+
+  function successed() {
+    response.send({
+      message: "doctor request has been cancel from patient successed",
+      isSuccess: true,
+    });
+  }
+
+  function failed(errMessage = "") {
+    response.send({
+      message: `doctor cancel request from patient failed: ${errMessage}`,
+      isSuccess: false,
+    });
+  }
+});
 export { patientsRoutes, doctorsRoutes };
