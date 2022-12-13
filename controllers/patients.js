@@ -42,12 +42,12 @@ export const getPatient = async (patientData) => {
 };
 
 export const searchPatientsByDeviceId = async (deviceId) => {
-  const deviceObjectId = await Devices.find({
+  const patientDevice = await Devices.find({
     deviceId: deviceId ? new RegExp(`^${deviceId}`) : deviceId,
   });
 
   const [isSuccess, errMessage, data] = await Patients.find({
-    device: deviceObjectId,
+    device: patientDevice._id,
   })
     .select("-password -__v")
     .populate("device", "-_id deviceId")
