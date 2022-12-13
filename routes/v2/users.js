@@ -8,7 +8,8 @@ import {
 import {
   getPatient,
   insertPatient,
-  searchPatientWithDeviceId,
+  searchPatientsByDeviceId,
+  filterPatientsAlreadyAddedByDoctorEmail,
 } from "../../controllers/patients.js";
 
 const patientsRoutes = express.Router();
@@ -79,16 +80,34 @@ patientsRoutes.post("/users/patients/signin", async (request, response) => {
 });
 
 patientsRoutes.get("/users/patients", async (request, response) => {
-  const patient = request.query;
+  const query = request.query;
 
-  console.log(patient);
+  console.log(query);
 
-  const { isSuccess, errMessage, data } = await searchPatientWithDeviceId(
-    patient.deviceId
+  const { isSuccess, errMessage, data } = await searchPatientsByDeviceId(
+    query.deviceId
   );
 
-  if (isSuccess) successed(data);
-  else failed(errMessage);
+  // If search is success then if there is a query with doctor email, filter(or remove) the patients already added with that email
+  if (isSuccess) {
+    if (query.doctorEmail) {
+      const {
+        isSuccess: isFilteredSuccess,
+        errMessage,
+        data: filterdData,
+      } = await filterPatientsAlreadyAddedByDoctorEmail(
+        data.patients,
+        query.doctorEmail
+      );
+
+      if (isFilteredSuccess) successed(filterdData);
+      else failed(errMessage);
+
+      return;
+    }
+
+    successed(data);
+  } else failed(errMessage);
 
   function successed(data) {
     response.send({

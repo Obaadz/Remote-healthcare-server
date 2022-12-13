@@ -1,4 +1,5 @@
 import Devices from "../models/device.js";
+import Doctors from "../models/doctor.js";
 import Patients from "../models/patient.js";
 
 export const insertPatient = async (patientData) => {
@@ -43,7 +44,7 @@ export const getPatient = async (patientData) => {
   return { isSuccess, errMessage, data };
 };
 
-export const searchPatientWithDeviceId = async (deviceId) => {
+export const searchPatientsByDeviceId = async (deviceId) => {
   const deviceObjectId = await Devices.find({
     deviceId: deviceId ? new RegExp(`^${deviceId}`) : deviceId,
   });
@@ -54,6 +55,29 @@ export const searchPatientWithDeviceId = async (deviceId) => {
     .select("-password -__v")
     .populate("device", "-_id deviceId")
     .then((patients) => [true, "", { patients }])
+    .catch((err) => [false, err.message, { patients: [] }]);
+
+  return { isSuccess, errMessage, data };
+};
+
+// It return array of patients who don't already added by this doctor email
+export const filterPatientsAlreadyAddedByDoctorEmail = async (
+  patients,
+  doctorEmail
+) => {
+  const doctorPatientsObjectIds = (
+    await Doctors.findOne({ email: doctorEmail })
+  )?.patients;
+
+  const [isSuccess, errMessage, data] = await Patients.find({
+    _id: {
+      $nin: doctorPatientsObjectIds,
+      $in: patients,
+    },
+  })
+    .select("-password -__v")
+    .populate("device", "-_id deviceId")
+    .then((filterdPatients) => [true, "", { patients: filterdPatients }])
     .catch((err) => [false, err.message, { patients: [] }]);
 
   return { isSuccess, errMessage, data };
