@@ -1,9 +1,6 @@
 import express from "express";
 import { pusher } from "../../index.js";
-import {
-  checkDeviceValidation,
-  updateDevice,
-} from "../../controllers/devices.js";
+import { checkDeviceValidation, updateDevice } from "../../controllers/devices.js";
 
 const devicesRoutes = express.Router();
 
@@ -53,9 +50,7 @@ devicesRoutes.put("/devices/update", async (request, response) => {
 
     response.send({
       message: `update failed: ${
-        errorMessage
-          ? errorMessage
-          : "deviceId or data to be updated is incorrect"
+        errorMessage ? errorMessage : "deviceId or data to be updated is incorrect"
       }`,
       isSuccess: false,
     });
@@ -68,11 +63,10 @@ devicesRoutes.put("/devices/update", async (request, response) => {
     });
   }
 
-  function checkDataToUpdateExist(dataToUpdate) {
+  function checkDataToUpdateExist(dataToUpdate = {}) {
     const { spo2, heartRate, temperature, fall } = dataToUpdate;
 
-    if (spo2 || heartRate || temperature || typeof fall == "boolean")
-      return true;
+    if (spo2 || heartRate || temperature || typeof fall == "boolean") return true;
 
     return false;
   }
