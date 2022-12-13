@@ -1,3 +1,4 @@
+import Devices from "../models/device.js";
 import Doctors from "../models/doctor.js";
 import Patients from "../models/patient.js";
 
@@ -43,6 +44,22 @@ export const insertPatientToDoctor = async (patient, doctorData) => {
   const [isSuccess, errMessage] = await Doctors.updateOne(doctorData, {
     $addToSet: { patients: patientObjectId },
   })
+    .then(() => [true, ""])
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage };
+};
+
+export const sendRequestToPatientByDoctorEmail = async (doctorEmail, deviceId) => {
+  const doctorObjectId = await Doctors.exists({ email: doctorEmail });
+  const deviceObjectId = await Devices.exists({ deviceId });
+
+  const [isSuccess, errMessage] = await Patients.updateOne(
+    { device: deviceObjectId },
+    {
+      $addToSet: { doctorsRequests: doctorObjectId },
+    }
+  )
     .then(() => [true, ""])
     .catch((err) => [false, err.message]);
 

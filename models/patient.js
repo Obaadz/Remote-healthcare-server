@@ -25,6 +25,12 @@ export const patientSchema = new mongoose.Schema({
     unique: true,
     ref: "Devices",
   },
+  doctorsRequests: {
+    type: [mongoose.Schema.Types.ObjectId],
+    unique: true,
+    ref: "Doctors",
+    default: [],
+  },
   password: {
     type: String,
     required: true,

@@ -4,6 +4,7 @@ import {
   getDoctor,
   insertDoctor,
   insertPatientToDoctor,
+  sendRequestToPatientByDoctorEmail,
 } from "../../controllers/doctors.js";
 import {
   getPatient,
@@ -39,9 +40,7 @@ patientsRoutes.post("/users/patients/signup", async (request, response) => {
   function failed(errMessage = "") {
     response.send({
       message: `patient signup failed: ${
-        errMessage.includes("duplicate")
-          ? "patient already registerd"
-          : errMessage
+        errMessage.includes("duplicate") ? "patient already registerd" : errMessage
       }`,
       isSuccess: false,
     });
@@ -143,9 +142,7 @@ doctorsRoutes.post("/users/doctors/signup", async (request, response) => {
   function failed(errMessage = "") {
     response.send({
       message: `doctor signup failed: ${
-        errMessage.includes("duplicate")
-          ? "doctor already registerd"
-          : errMessage
+        errMessage.includes("duplicate") ? "doctor already registerd" : errMessage
       }`,
       isSuccess: false,
     });
@@ -170,6 +167,35 @@ doctorsRoutes.post("/users/doctors/signin", async (request, response) => {
   function failed(errMessage = "") {
     response.send({
       message: `doctor signin failed: ${errMessage}`,
+      isSuccess: false,
+    });
+  }
+});
+
+doctorsRoutes.put("/users/doctors/request_patient", async (request, response) => {
+  const requestData = request.body;
+
+  console.log(requestData);
+
+  const { isSuccess, errMessage } = await sendRequestToPatientByDoctorEmail(
+    requestData.doctorEmail,
+    requestData.deviceId
+  );
+
+  if (isSuccess) {
+    successed();
+  } else failed(errMessage);
+
+  function successed() {
+    response.send({
+      message: "doctor request has been sent to patient successed",
+      isSuccess: true,
+    });
+  }
+
+  function failed(errMessage = "") {
+    response.send({
+      message: `doctor request to patient failed: ${errMessage}`,
       isSuccess: false,
     });
   }
