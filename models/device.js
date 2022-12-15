@@ -16,7 +16,7 @@ export const deviceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  lastUpdate: {
+  updatedAt: {
     type: Date,
     default: Date.now(),
   },
