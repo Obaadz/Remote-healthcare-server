@@ -5,6 +5,12 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    lowercase: true,
+    required: true,
+    trim: true,
+  },
   gender: {
     type: String,
     lowercase: true,
