@@ -1,21 +1,21 @@
 import express from "express";
 import { checkDeviceValidation } from "../../controllers/devices.js";
 import {
-  getDoctor,
-  insertDoctor,
-  addPatientToDoctorByDoctorEmail,
-  sendRequestToPatientByDoctorEmail,
-  cancelRequestToPatientByDoctorEmail,
-} from "../../controllers/doctors.js";
+  getAdmin,
+  insertAdmin,
+  addPatientToAdminByAdminEmail,
+  sendRequestToPatientByAdminEmail,
+  cancelRequestToPatientByAdminEmail,
+} from "../../controllers/admins.js";
 import {
   getPatient,
   insertPatient,
   searchPatientsByDeviceId,
-  filterPatientsAlreadyAddedByDoctorEmail,
+  filterPatientsAlreadyAddedByAdminEmail,
 } from "../../controllers/patients.js";
 
 const patientsRoutes = express.Router();
-const doctorsRoutes = express.Router();
+const adminsRoutes = express.Router();
 
 patientsRoutes.post("/users/patients/signup", async (request, response) => {
   const patient = request.body;
@@ -86,14 +86,14 @@ patientsRoutes.get("/users/patients", async (request, response) => {
 
   const { isSuccess, errMessage, data } = await searchPatientsByDeviceId(query.deviceId);
 
-  // If search is success then if there is a query with doctor email, filter(or remove) the patients already added with that email
+  // If search is success then if there is a query with admin email, filter(or remove) the patients already added with that email
   if (isSuccess) {
-    if (query.doctorEmail) {
+    if (query.adminEmail) {
       const {
         isSuccess: isFilteredSuccess,
         errMessage,
         data: filterdData,
-      } = await filterPatientsAlreadyAddedByDoctorEmail(data.patients, query.doctorEmail);
+      } = await filterPatientsAlreadyAddedByAdminEmail(data.patients, query.adminEmail);
 
       if (isFilteredSuccess) successed(filterdData);
       else failed(errMessage);
@@ -120,41 +120,41 @@ patientsRoutes.get("/users/patients", async (request, response) => {
   }
 });
 
-doctorsRoutes.post("/users/doctors/signup", async (request, response) => {
-  const doctor = request.body;
+adminsRoutes.post("/users/admins/signup", async (request, response) => {
+  const admin = request.body;
 
-  const { isSuccess, errMessage } = await insertDoctor(doctor);
+  const { isSuccess, errMessage } = await insertAdmin(admin);
 
   if (isSuccess) successed();
   else failed(errMessage);
 
   function successed() {
     response.status(201).send({
-      message: "doctor signup successed",
+      message: "admin signup successed",
       isSuccess: true,
     });
   }
 
   function failed(errMessage = "") {
     response.send({
-      message: `doctor signup failed: ${
-        errMessage.includes("duplicate") ? "doctor already registerd" : errMessage
+      message: `admin signup failed: ${
+        errMessage.includes("duplicate") ? "admin already registerd" : errMessage
       }`,
       isSuccess: false,
     });
   }
 });
-doctorsRoutes.post("/users/doctors/signin", async (request, response) => {
-  const doctor = request.body;
+adminsRoutes.post("/users/admins/signin", async (request, response) => {
+  const admin = request.body;
 
-  const { isSuccess, errMessage, data } = await getDoctor(doctor);
+  const { isSuccess, errMessage, data } = await getAdmin(admin);
 
   if (isSuccess) successed(data);
   else failed(errMessage);
 
   function successed(data) {
     response.send({
-      message: "doctor signin successed",
+      message: "admin signin successed",
       isSuccess: true,
       data,
     });
@@ -162,13 +162,13 @@ doctorsRoutes.post("/users/doctors/signin", async (request, response) => {
 
   function failed(errMessage = "") {
     response.send({
-      message: `doctor signin failed: ${errMessage}`,
+      message: `admin signin failed: ${errMessage}`,
       isSuccess: false,
     });
   }
 });
 
-doctorsRoutes.put("/users/doctors/request_patient", async (request, response) => {
+adminsRoutes.put("/users/admins/request_patient", async (request, response) => {
   const requestData = request.body;
 
   const isDeviceExist = await checkDeviceValidation(requestData.deviceId);
@@ -179,8 +179,8 @@ doctorsRoutes.put("/users/doctors/request_patient", async (request, response) =>
 
   console.log(requestData);
 
-  const { isSuccess, errMessage } = await sendRequestToPatientByDoctorEmail(
-    requestData.doctorEmail,
+  const { isSuccess, errMessage } = await sendRequestToPatientByAdminEmail(
+    requestData.adminEmail,
     requestData.deviceId
   );
 
@@ -190,20 +190,20 @@ doctorsRoutes.put("/users/doctors/request_patient", async (request, response) =>
 
   function successed() {
     response.send({
-      message: "doctor request has been sent to patient successed",
+      message: "admin request has been sent to patient successed",
       isSuccess: true,
     });
   }
 
   function failed(errMessage = "") {
     response.send({
-      message: `doctor request to patient failed: ${errMessage}`,
+      message: `admin request to patient failed: ${errMessage}`,
       isSuccess: false,
     });
   }
 });
 
-doctorsRoutes.put("/users/doctors/request_patient/cancel", async (request, response) => {
+adminsRoutes.put("/users/admins/request_patient/cancel", async (request, response) => {
   const requestData = request.body;
 
   const isDeviceExist = await checkDeviceValidation(requestData.deviceId);
@@ -214,8 +214,8 @@ doctorsRoutes.put("/users/doctors/request_patient/cancel", async (request, respo
 
   console.log(requestData);
 
-  const { isSuccess, errMessage } = await cancelRequestToPatientByDoctorEmail(
-    requestData.doctorEmail,
+  const { isSuccess, errMessage } = await cancelRequestToPatientByAdminEmail(
+    requestData.adminEmail,
     requestData.deviceId
   );
 
@@ -225,16 +225,16 @@ doctorsRoutes.put("/users/doctors/request_patient/cancel", async (request, respo
 
   function successed() {
     response.send({
-      message: "doctor request has been cancel from patient successed",
+      message: "admin request has been cancel from patient successed",
       isSuccess: true,
     });
   }
 
   function failed(errMessage = "") {
     response.send({
-      message: `doctor cancel request from patient failed: ${errMessage}`,
+      message: `admin cancel request from patient failed: ${errMessage}`,
       isSuccess: false,
     });
   }
 });
-export { patientsRoutes, doctorsRoutes };
+export { patientsRoutes, adminsRoutes };

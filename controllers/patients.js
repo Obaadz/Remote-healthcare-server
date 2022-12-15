@@ -1,5 +1,5 @@
 import Devices from "../models/device.js";
-import Doctors from "../models/doctor.js";
+import Admins from "../models/admin.js";
 import Patients from "../models/patient.js";
 import { getDeviceByDeviceId } from "./devices.js";
 
@@ -49,7 +49,7 @@ export const searchPatientsByDeviceId = async (deviceId) => {
   const [isSuccess, errMessage, data] = await Patients.find({
     device: patientsDevices,
   })
-    .select("-password -__v -doctorsRequests")
+    .select("-password -__v -adminsRequests")
     .populate("device", "-_id deviceId")
     .then((patients) => [true, "", { patients }])
     .catch((err) => [false, err.message, { patients: [] }]);
@@ -57,30 +57,29 @@ export const searchPatientsByDeviceId = async (deviceId) => {
   return { isSuccess, errMessage, data };
 };
 
-// It return array of patients who don't already added by this doctor email
-// It also add 'IsRequestedAlready' boolean variable, to patients who already has been requested by this doctor email
-export const filterPatientsAlreadyAddedByDoctorEmail = async (patients, doctorEmail) => {
-  const doctorPatientsObjectIds = (await Doctors.findOne({ email: doctorEmail }))
-    ?.patients;
+// It return array of patients who don't already added by this admin email
+// It also add 'IsRequestedAlready' boolean variable, to patients who already has been requested by this admin email
+export const filterPatientsAlreadyAddedByAdminEmail = async (patients, adminEmail) => {
+  const adminPatientsObjectIds = (await Admins.findOne({ email: adminEmail }))?.patients;
 
   const [isSuccess, errMessage, data] = await Patients.find({
     _id: {
-      $nin: doctorPatientsObjectIds,
+      $nin: adminPatientsObjectIds,
       $in: patients,
     },
   })
     .select("-password -__v")
     .populate("device", "-_id deviceId")
-    .populate("doctorsRequests", "-_id email")
+    .populate("adminsRequests", "-_id email")
     .lean()
     .then((filterdPatients) => {
       const filteredPatientsWithIsRequestedAlready = filterdPatients.map((patient) => {
-        patient.isRequestedAlready = patient.doctorsRequests.some(
-          (doctor) => doctor.email == doctorEmail
+        patient.isRequestedAlready = patient.adminsRequests.some(
+          (admin) => admin.email == adminEmail
         );
 
-        // remove the doctors requests (emails) so it will not be send with response...
-        delete patient.doctorsRequests;
+        // remove the admins requests (emails) so it will not be send with response...
+        delete patient.adminsRequests;
 
         return patient;
       });
