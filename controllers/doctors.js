@@ -7,6 +7,7 @@ export const insertDoctor = async (doctorData) => {
   const Doctor = new Doctors({
     username: doctorData.username,
     password: doctorData.password,
+    role: doctorData.role,
     age: doctorData.age,
     email: doctorData.email,
     gender: doctorData.gender,
