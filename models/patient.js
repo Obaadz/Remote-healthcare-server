@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import reportSchema from "./schemas/report.js";
 
 export const patientSchema = new mongoose.Schema({
   username: {
@@ -30,6 +31,7 @@ export const patientSchema = new mongoose.Schema({
     ref: "Doctors",
     default: [],
   },
+  reports: { type: [reportSchema], default: [] },
   password: {
     type: String,
     required: true,
