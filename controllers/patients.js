@@ -29,7 +29,7 @@ export const getPatient = async (patientData) => {
     device: patientDevice._id,
     password: patientData.password,
   })
-    .select("-password -__v")
+    .select("-password -__v -reports")
     .populate("device", "-_id")
     .then((patient) => {
       if (patient) return [true, "", { patient }];
