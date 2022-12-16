@@ -22,12 +22,12 @@ export const insertPatient = async (patientData) => {
   return { isSuccess, errMessage };
 };
 
-export const getPatient = async (patientData) => {
-  const patientDevice = await getDeviceByDeviceId(patientData.deviceId);
+export const getPatientByDeviceIdAndPassword = async (deviceId, password) => {
+  const patientDevice = await getDeviceByDeviceId(deviceId);
 
   const [isSuccess, errMessage, data] = await Patients.findOne({
     device: patientDevice._id,
-    password: patientData.password,
+    password,
   })
     .select("-password -__v -reports")
     .populate("device", "-_id")

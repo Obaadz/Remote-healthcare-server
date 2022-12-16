@@ -8,7 +8,7 @@ import {
   cancelRequestToPatientByAdminEmail,
 } from "../../controllers/admins.js";
 import {
-  getPatient,
+  getPatientByDeviceIdAndPassword,
   insertPatient,
   searchPatientsByDeviceId,
   filterPatientsAlreadyAddedByAdminEmail,
@@ -84,7 +84,10 @@ patientsRoutes.post("/users/patients/signin", async (request, response) => {
     return;
   }
 
-  const { isSuccess, errMessage, data } = await getPatient(patient);
+  const { isSuccess, errMessage, data } = await getPatientByDeviceIdAndPassword(
+    patient.deviceId,
+    patient.password
+  );
 
   if (isSuccess) successed(data);
   else failed(errMessage);
