@@ -42,6 +42,23 @@ export const getPatient = async (patientData) => {
   return { isSuccess, errMessage, data };
 };
 
+export const getPatientByPatientId = async (patientId) => {
+  const [isSuccess, errMessage, data] = await Patients.findOne({
+    _id: patientId,
+  })
+    .select("-password -__v -reports")
+    .populate("device", "-_id")
+    .populate("adminsRequests", "-_id -__v -password -patients")
+    .then((patient) => {
+      if (patient) return [true, "", { patient }];
+
+      return [false, "id is incorrect"];
+    })
+    .catch((err) => [false, "id is incorrect"]);
+
+  return { isSuccess, errMessage, data };
+};
+
 export const searchPatientsByDeviceId = async (deviceId) => {
   const patientsDevices = await Devices.find({
     deviceId: deviceId ? new RegExp(`^${deviceId}`) : deviceId,

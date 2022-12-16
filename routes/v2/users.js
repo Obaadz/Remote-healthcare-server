@@ -12,11 +12,37 @@ import {
   insertPatient,
   searchPatientsByDeviceId,
   filterPatientsAlreadyAddedByAdminEmail,
+  getPatientByPatientId,
 } from "../../controllers/patients.js";
 
 const patientsRoutes = express.Router();
 const adminsRoutes = express.Router();
 
+patientsRoutes.get("/users/patients/signin", async (request, response) => {
+  const query = request.query;
+
+  console.log(query);
+
+  const { isSuccess, errMessage, data } = await getPatientByPatientId(query.patientId);
+
+  if (isSuccess) successed(data);
+  else failed(errMessage);
+
+  function successed(data) {
+    response.send({
+      message: "patient query successed",
+      isSuccess: true,
+      data,
+    });
+  }
+
+  function failed(errMessage = "") {
+    response.send({
+      message: `patient query failed: ${errMessage}`,
+      isSuccess: false,
+    });
+  }
+});
 patientsRoutes.post("/users/patients/signup", async (request, response) => {
   const patient = request.body;
 
