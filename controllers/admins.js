@@ -20,11 +20,8 @@ export const insertAdmin = async (adminData) => {
   return { isSuccess, errMessage };
 };
 
-export const getAdmin = async (adminData) => {
-  const [isSuccess, errMessage, data] = await Admins.findOne({
-    email: adminData.email,
-    password: adminData.password,
-  })
+export const getAdminByEmailAndPassword = async (email, password) => {
+  const [isSuccess, errMessage, data] = await Admins.findOne({ email, password })
     .select("-password -__v")
     .populate("patients", "-_id -password -device -__v")
     .then((admin) => {
@@ -39,15 +36,11 @@ export const getAdmin = async (adminData) => {
 
 export const addPatientToAdminByAdminEmail = async (adminEmail, deviceId) => {
   const patientDevice = await getDeviceByDeviceId(deviceId);
-  const patient = await Patients.exists({
-    device: patientDevice._id,
-  });
+  const patient = await Patients.exists({ device: patientDevice._id });
 
   const [isSuccess, errMessage] = await Admins.updateOne(
     { email: adminEmail },
-    {
-      $addToSet: { patients: patient._id },
-    }
+    { $addToSet: { patients: patient._id } }
   )
     .then(() => [true, ""])
     .catch((err) => [false, err.message]);

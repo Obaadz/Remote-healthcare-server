@@ -1,7 +1,7 @@
 import express from "express";
 import { checkDeviceValidation } from "../../controllers/devices.js";
 import {
-  getAdmin,
+  getAdminByEmailAndPassword,
   insertAdmin,
   addPatientToAdminByAdminEmail,
   sendRequestToPatientByAdminEmail,
@@ -177,7 +177,10 @@ adminsRoutes.post("/users/admins/signup", async (request, response) => {
 adminsRoutes.post("/users/admins/signin", async (request, response) => {
   const admin = request.body;
 
-  const { isSuccess, errMessage, data } = await getAdmin(admin);
+  const { isSuccess, errMessage, data } = await getAdminByEmailAndPassword(
+    admin.email,
+    admin.password
+  );
 
   if (isSuccess) successed(data);
   else failed(errMessage);
