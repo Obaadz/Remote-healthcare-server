@@ -14,6 +14,7 @@ import {
   filterPatientsAlreadyAddedByAdminEmail,
   getPatientByPatientId,
 } from "../../controllers/patients.js";
+import { pusher } from "../../index.js";
 
 const patientsRoutes = express.Router();
 const adminsRoutes = express.Router();
@@ -208,19 +209,23 @@ adminsRoutes.put("/users/admins/request_patient", async (request, response) => {
 
   console.log(requestData);
 
-  const { isSuccess, errMessage } = await sendRequestToPatientByAdminEmail(
+  const { isSuccess, errMessage, data } = await sendRequestToPatientByAdminEmail(
     requestData.adminEmail,
     requestData.deviceId
   );
 
   if (isSuccess) {
-    successed();
+    successed(data);
   } else failed(errMessage);
 
-  function successed() {
-    response.send({
-      message: "admin request has been sent to patient successed",
-      isSuccess: true,
+  function successed(data) {
+    sendDataToClient(requestData.deviceId, data.adminsRequestsLength).finally(() => {
+      console.log("DATA HAS BEEN SENTED TO CLIENT");
+
+      response.send({
+        message: "admin request has been sent to patient successed",
+        isSuccess: true,
+      });
     });
   }
 
@@ -228,6 +233,13 @@ adminsRoutes.put("/users/admins/request_patient", async (request, response) => {
     response.send({
       message: `admin request to patient failed: ${errMessage}`,
       isSuccess: false,
+    });
+  }
+
+  function sendDataToClient(deviceId, adminsRequestsLength) {
+    return pusher.trigger(`user-${deviceId}`, "user-data-changed", {
+      message: "receiving new length of adminsRequests",
+      adminsRequestsLength,
     });
   }
 });
@@ -243,19 +255,21 @@ adminsRoutes.put("/users/admins/request_patient/cancel", async (request, respons
 
   console.log(requestData);
 
-  const { isSuccess, errMessage } = await cancelRequestToPatientByAdminEmail(
+  const { isSuccess, errMessage, data } = await cancelRequestToPatientByAdminEmail(
     requestData.adminEmail,
     requestData.deviceId
   );
 
   if (isSuccess) {
-    successed();
+    successed(data);
   } else failed(errMessage);
 
-  function successed() {
-    response.send({
-      message: "admin request has been cancel from patient successed",
-      isSuccess: true,
+  function successed(data) {
+    sendDataToClient(requestData.deviceId, data.adminsRequestsLength).finally(() => {
+      response.send({
+        message: "admin request has been cancel from patient successed",
+        isSuccess: true,
+      });
     });
   }
 
@@ -265,5 +279,13 @@ adminsRoutes.put("/users/admins/request_patient/cancel", async (request, respons
       isSuccess: false,
     });
   }
+
+  function sendDataToClient(deviceId, adminsRequestsLength) {
+    return pusher.trigger(`user-${deviceId}`, "user-data-changed", {
+      message: "receiving new length of adminsRequests",
+      adminsRequestsLength,
+    });
+  }
 });
+
 export { patientsRoutes, adminsRoutes };

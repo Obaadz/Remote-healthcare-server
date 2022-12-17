@@ -59,30 +59,36 @@ export const sendRequestToPatientByAdminEmail = async (adminEmail, deviceId) => 
   const admin = await Admins.exists({ email: adminEmail });
   const patientDevice = await getDeviceByDeviceId(deviceId);
 
-  const [isSuccess, errMessage] = await Patients.updateOne(
+  const [isSuccess, errMessage, data] = await Patients.findOneAndUpdate(
     { device: patientDevice._id },
-    {
-      $addToSet: { adminsRequests: admin._id },
-    }
+    { $addToSet: { adminsRequests: admin._id } },
+    { new: true }
   )
-    .then(() => [true, ""])
+    .then((patient) => [
+      true,
+      "",
+      { adminsRequestsLength: patient.adminsRequests.length },
+    ])
     .catch((err) => [false, err.message]);
 
-  return { isSuccess, errMessage };
+  return { isSuccess, errMessage, data };
 };
 
 export const cancelRequestToPatientByAdminEmail = async (adminEmail, deviceId) => {
   const admin = await Admins.exists({ email: adminEmail });
   const patientDevice = await getDeviceByDeviceId(deviceId);
 
-  const [isSuccess, errMessage] = await Patients.updateOne(
+  const [isSuccess, errMessage, data] = await Patients.findOneAndUpdate(
     { device: patientDevice._id },
-    {
-      $pull: { adminsRequests: admin._id },
-    }
+    { $pull: { adminsRequests: admin._id } },
+    { new: true }
   )
-    .then(() => [true, ""])
+    .then((patient) => [
+      true,
+      "",
+      { adminsRequestsLength: patient.adminsRequests.length },
+    ])
     .catch((err) => [false, err.message]);
 
-  return { isSuccess, errMessage };
+  return { isSuccess, errMessage, data };
 };
