@@ -286,5 +286,52 @@ adminsRoutes.put("/users/admins/request_patient/cancel", async (request, respons
     });
   }
 });
+adminsRoutes.put("/users/admins/request_patient/accept", async (request, response) => {
+  const requestData = request.body;
 
+  const isDeviceExist = await checkDeviceValidation(requestData.deviceId);
+  if (!isDeviceExist) {
+    failed("deviceId is not exist");
+    return;
+  }
+
+  console.log(requestData);
+
+  const { data } = await cancelRequestToPatientByAdminEmail(
+    requestData.adminEmail,
+    requestData.deviceId
+  );
+
+  const { isSuccess, errMessage } = await addPatientToAdminByAdminEmail(
+    requestData.adminEmail,
+    requestData.deviceId
+  );
+
+  if (isSuccess) {
+    successed(data);
+  } else failed(errMessage);
+
+  function successed(data) {
+    sendDataToClient(requestData.deviceId, data.adminsRequestsLength).finally(() => {
+      response.send({
+        message: "admin has been added to patient successed",
+        isSuccess: true,
+      });
+    });
+  }
+
+  function failed(errMessage = "") {
+    response.send({
+      message: `admin add to patient failed: ${errMessage}`,
+      isSuccess: false,
+    });
+  }
+
+  function sendDataToClient(deviceId, adminsRequestsLength) {
+    return pusher.trigger(`user-${deviceId}`, "user-data-changed", {
+      message: "receiving new length of adminsRequests",
+      adminsRequestsLength,
+    });
+  }
+});
 export { patientsRoutes, adminsRoutes };
