@@ -55,7 +55,7 @@ export const updateFields = async (request, response) => {
 export const updateDevice = async (deviceData) => {
   const [isSuccess, errMessage] = await Devices.updateOne(
     { deviceId: deviceData.deviceId },
-    { ...deviceData.dataToUpdate }
+    { ...deviceData.dataToUpdate, updatedAt: Date.now() }
   )
     .then(() => [true, ""])
     .catch((err) => [false, err.message]);
