@@ -46,6 +46,7 @@ patientsRoutes.get("/users/patients/signin", async (request, response) => {
     });
   }
 });
+
 patientsRoutes.post("/users/patients/signup", async (request, response) => {
   const patient = request.body;
 
@@ -76,6 +77,7 @@ patientsRoutes.post("/users/patients/signup", async (request, response) => {
     });
   }
 });
+
 patientsRoutes.post("/users/patients/signin", async (request, response) => {
   const patient = request.body;
 
@@ -112,29 +114,20 @@ patientsRoutes.post("/users/patients/signin", async (request, response) => {
 });
 
 patientsRoutes.get("/users/patients", async (request, response) => {
-  const query = request.query;
+  const { deviceId, adminEmail } = request.query;
 
-  console.log(query);
+  console.log(deviceId, adminEmail);
 
-  const { isSuccess, errMessage, data } = await searchPatientsByDeviceId(query.deviceId);
+  try {
+    let data = await searchPatientsByDeviceId(deviceId);
 
-  // If search is success then if there is a query with admin email, filter(or remove) the patients already added with that email
-  if (isSuccess) {
-    if (query.adminEmail) {
-      const {
-        isSuccess: isFilteredSuccess,
-        errMessage,
-        data: filterdData,
-      } = await filterPatientsAlreadyAddedByAdminEmail(data.patients, query.adminEmail);
-
-      if (isFilteredSuccess) successed(filterdData);
-      else failed(errMessage);
-
-      return;
-    }
+    if (adminEmail)
+      data = await filterPatientsAlreadyAddedByAdminEmail(data.patients, adminEmail);
 
     successed(data);
-  } else failed(errMessage);
+  } catch (err) {
+    failed(err.message);
+  }
 
   function successed(data) {
     response.send({
@@ -176,6 +169,7 @@ adminsRoutes.post("/users/admins/signup", async (request, response) => {
     });
   }
 });
+
 adminsRoutes.post("/users/admins/signin", async (request, response) => {
   const admin = request.body;
 

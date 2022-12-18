@@ -62,23 +62,24 @@ export const searchPatientsByDeviceId = async (deviceId) => {
     deviceId: deviceId ? new RegExp(`^${deviceId}`) : deviceId,
   });
 
-  const [isSuccess, errMessage, data] = await Patients.find({
+  const patients = await Patients.find({
     device: patientsDevices,
   })
     .select("-password -__v -adminsRequests")
-    .populate("device", "-_id deviceId")
-    .then((patients) => [true, "", { patients }])
-    .catch((err) => [false, err.message, { patients: [] }]);
+    .populate("device", "-_id deviceId");
 
-  return { isSuccess, errMessage, data };
+  if (!patients || !patients.length) {
+    return { patients: [] };
+  }
+
+  return { patients };
 };
 
 // It return array of patients who don't already added by this admin email
-// It also add 'IsRequestedAlready' boolean variable, to patients who already has been requested by this admin email
 export const filterPatientsAlreadyAddedByAdminEmail = async (patients, adminEmail) => {
   const adminPatientsObjectIds = (await Admins.findOne({ email: adminEmail }))?.patients;
 
-  const [isSuccess, errMessage, data] = await Patients.find({
+  const filterdPatients = await Patients.find({
     _id: {
       $nin: adminPatientsObjectIds,
       $in: patients,
@@ -87,22 +88,32 @@ export const filterPatientsAlreadyAddedByAdminEmail = async (patients, adminEmai
     .select("-password -__v")
     .populate("device", "-_id deviceId")
     .populate("adminsRequests", "-_id email")
-    .lean()
-    .then((filterdPatients) => {
-      const filteredPatientsWithIsRequestedAlready = filterdPatients.map((patient) => {
-        patient.isRequestedAlready = patient.adminsRequests.some(
-          (admin) => admin.email == adminEmail
-        );
+    .lean();
 
-        // remove the admins requests (emails) so it will not be send with response...
-        delete patient.adminsRequests;
+  if (!filterdPatients || !filterdPatients.length) {
+    return { patients: [] };
+  }
 
-        return patient;
-      });
+  const filteredPatientsWithIsRequestedAlready = addIsRequestedAlreadyProperty(
+    filterdPatients,
+    adminEmail
+  );
 
-      return [true, "", { patients: filteredPatientsWithIsRequestedAlready }];
-    })
-    .catch((err) => [false, err.message, { patients: [] }]);
+  return { patients: filteredPatientsWithIsRequestedAlready };
+};
 
-  return { isSuccess, errMessage, data };
+// Utils functions for patients:
+
+// Add 'IsRequestedAlready' boolean variable, to patients who already has been requested by this admin email
+const addIsRequestedAlreadyProperty = (patients, adminEmail) => {
+  return patients.map((patient) => {
+    patient.isRequestedAlready = patient.adminsRequests.some(
+      (admin) => admin.email == adminEmail
+    );
+
+    // remove the admins requests (emails) so it will not be send with response...
+    delete patient.adminsRequests;
+
+    return patient;
+  });
 };
