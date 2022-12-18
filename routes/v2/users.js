@@ -20,14 +20,16 @@ const patientsRoutes = express.Router();
 const adminsRoutes = express.Router();
 
 patientsRoutes.get("/users/patients/signin", async (request, response) => {
-  const query = request.query;
+  const { patientId } = request.query;
 
-  console.log(query);
+  console.log(patientId);
 
-  const { isSuccess, errMessage, data } = await getPatientByPatientId(query.patientId);
-
-  if (isSuccess) successed(data);
-  else failed(errMessage);
+  try {
+    const data = await getPatientByPatientId(patientId);
+    successed(data);
+  } catch (err) {
+    failed(err.message);
+  }
 
   function successed(data) {
     response.send({

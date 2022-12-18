@@ -43,20 +43,18 @@ export const getPatientByDeviceIdAndPassword = async (deviceId, password) => {
 };
 
 export const getPatientByPatientId = async (patientId) => {
-  const [isSuccess, errMessage, data] = await Patients.findOne({
+  const patient = await Patients.findOne({
     _id: patientId,
   })
     .select("-password -__v -reports")
     .populate("device", "-_id")
-    .populate("adminsRequests", "-_id -__v -password -patients")
-    .then((patient) => {
-      if (patient) return [true, "", { patient }];
+    .populate("adminsRequests", "-_id -__v -password -patients");
 
-      return [false, "id is incorrect"];
-    })
-    .catch((err) => [false, "id is incorrect"]);
+  if (!patient) {
+    throw new Error("patient not found");
+  }
 
-  return { isSuccess, errMessage, data };
+  return { patient };
 };
 
 export const searchPatientsByDeviceId = async (deviceId) => {
