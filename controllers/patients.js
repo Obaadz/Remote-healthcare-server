@@ -81,7 +81,14 @@ export const searchPatientsByDeviceId = async (deviceId) => {
   return { patients };
 };
 
-// It return array of patients who don't already added by this admin email
+/**
+ * Filters an array of patients to exclude those that are already added by a specific admin.
+ *
+ * @param {Array} patients - The array of patient documents to filter.
+ * @param {string} adminEmail - The email of the admin.
+ * @returns {Object} An object containing an array of patient documents that are not already added by the admin.
+ * If no patients are found, an empty array is returned.
+ */
 export const filterPatientsAlreadyAddedByAdminEmail = async (patients, adminEmail) => {
   const adminPatientsObjectIds = (await Admins.findOne({ email: adminEmail }))?.patients;
 
