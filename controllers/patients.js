@@ -117,7 +117,13 @@ export const filterPatientsAlreadyAddedByAdminEmail = async (patients, adminEmai
 
 // Utils functions for patients:
 
-// Add 'IsRequestedAlready' boolean variable, to patients who already has been requested by this admin email
+/**
+ * Adds an `isRequestedAlready` property to each patient indicating whether the admin has already requested access to the patient's data.
+ *
+ * @param {Array} patients - The array of patient documents to add the property to.
+ * @param {string} adminEmail - The email of the admin.
+ * @returns {Array} The array of patient documents with the added `isRequestedAlready` property.
+ */
 const addIsRequestedAlreadyProperty = (patients, adminEmail) => {
   return patients.map((patient) => {
     patient.isRequestedAlready = patient.adminsRequests.some(
