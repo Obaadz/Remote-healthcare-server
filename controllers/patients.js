@@ -57,6 +57,12 @@ export const getPatientByPatientId = async (patientId) => {
   return { patient };
 };
 
+/**
+ * Searches for patients by device ID.
+ *
+ * @param {string} [deviceId] - The device ID to search for. If not provided, an empty array is returned.
+ * @returns {Object} An object containing an array of patient documents. If no patients are found, an empty array is returned.
+ */
 export const searchPatientsByDeviceId = async (deviceId) => {
   const patientsDevices = await Devices.find({
     deviceId: deviceId ? new RegExp(`^${deviceId}`) : deviceId,
