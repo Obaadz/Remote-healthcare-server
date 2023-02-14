@@ -60,6 +60,9 @@ devicesRoutes.put("/devices/update", async (request, response) => {
     return pusher.trigger(`user-${deviceId}`, "user-data-changed", {
       message: "receiving new device data",
       ...dataToUpdate,
+      temperature: dataToUpdate.temperature
+        ? dataToUpdate?.temperature?.toString()
+        : null,
     });
   }
 
