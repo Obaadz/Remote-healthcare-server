@@ -1,6 +1,10 @@
 import express from "express";
 import { pusher } from "../../index.js";
-import { checkDeviceValidation, updateDevice } from "../../controllers/devices.js";
+import {
+  checkDeviceValidation,
+  updateDevice,
+  getDeviceData,
+} from "../../controllers/devices.js";
 
 const devicesRoutes = express.Router();
 
@@ -9,7 +13,8 @@ devicesRoutes.put("/devices/update", async (request, response) => {
   const device = request.body;
 
   const isDeviceExist = await checkDeviceValidation(device.deviceId);
-  const isDataToUpdateExist = checkDataToUpdateExist(device.dataToUpdate);
+  const oldDeviceData = await getDeviceData(device.deviceId);
+  const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
   if (!isDeviceExist || !isDataToUpdateExist) {
     failed();
@@ -66,10 +71,26 @@ devicesRoutes.put("/devices/update", async (request, response) => {
     });
   }
 
-  function checkDataToUpdateExist(dataToUpdate = {}) {
-    const { spo2, heartRate, temperature, fall } = dataToUpdate;
-
-    if (spo2 || heartRate || temperature || typeof fall == "boolean") return true;
+  function handleDataToUpdate(dataToUpdate = {}, oldDeviceData) {
+    if (
+      dataToUpdate.heartRate &&
+      (dataToUpdate.heartRate < 60 || dataToUpdate.heartRate > 115)
+    )
+      dataToUpdate.heartRate = oldDeviceData.heartRate || null;
+    if (dataToUpdate.spo2 && (dataToUpdate.spo2 < 90 || dataToUpdate.spo2 > 100))
+      dataToUpdate.spo2 = oldDeviceData.spo2 || null;
+    if (
+      dataToUpdate.temperature &&
+      (dataToUpdate.temperature < 35 || dataToUpdate.temperature > 40)
+    )
+      dataToUpdate.temperature = oldDeviceData.temperature || null;
+    if (
+      dataToUpdate.spo2 ||
+      dataToUpdate.heartRate ||
+      dataToUpdate.temperature ||
+      typeof dataToUpdate.fall == "boolean"
+    )
+      return true;
 
     return false;
   }

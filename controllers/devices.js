@@ -63,6 +63,14 @@ export const updateDevice = async (deviceData) => {
   return { isSuccess, errMessage };
 };
 
+export const getDeviceData = async (deviceId) => {
+  const deviceData = await Devices.findOne({
+    deviceId,
+  });
+
+  return deviceData;
+};
+
 // Utils functions for devices collection:
 export const checkDeviceValidation = async (deviceId) => {
   const isDataValid = await Devices.exists({
