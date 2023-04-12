@@ -64,11 +64,15 @@ export const updateDevice = async (deviceData) => {
 };
 
 export const getDeviceData = async (deviceId) => {
-  const deviceData = await Devices.findOne({
-    deviceId,
-  });
+  try {
+    const deviceData = await Devices.findOne({
+      deviceId,
+    });
 
-  return deviceData;
+    return deviceData;
+  } catch (err) {
+    return false;
+  }
 };
 
 // Utils functions for devices collection:

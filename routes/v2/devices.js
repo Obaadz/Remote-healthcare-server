@@ -12,11 +12,10 @@ const devicesRoutes = express.Router();
 devicesRoutes.put("/devices/update", async (request, response) => {
   const device = request.body;
 
-  const isDeviceExist = await checkDeviceValidation(device.deviceId);
   const oldDeviceData = await getDeviceData(device.deviceId);
   const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
-  if (!isDeviceExist || !isDataToUpdateExist) {
+  if (!oldDeviceData || !isDataToUpdateExist) {
     failed();
     return;
   }
