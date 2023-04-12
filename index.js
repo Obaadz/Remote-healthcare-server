@@ -1,7 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import v1Routes from "./routes/v1/index.js";
 import v2Routes from "./routes/v2/index.js";
 import "dotenv/config";
 import Pusher from "pusher";
@@ -18,7 +17,6 @@ app.use(bodyParser.urlencoded);
 app.use(bodyParser.json);
 app.use(cors());
 
-app.use(v1Routes);
 app.use(v2Routes);
 
 export const pusher = new Pusher({
