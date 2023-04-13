@@ -40,11 +40,10 @@ devicesRoutes.put("/devices/update", async (request, response) => {
     const response = await client.createNotification(notification);
     console.log(response.body.id);
   } catch (e) {
-    if (e instanceof OneSignal.HTTPError) {
-      // When status code of HTTP response is not 2xx, HTTPError is thrown.
-      console.log(e.statusCode);
-      console.log(e.body);
-    }
+    console.log("ERROR ON SENDING NOTIFICATION");
+    console.log(e.message);
+    console.log(e.statusCode);
+    console.log(e.body);
   }
 
   const oldDeviceData = await getDeviceData(device.deviceId);
