@@ -32,6 +32,8 @@ devicesRoutes.put("/devices/update", async (request, response) => {
 
   const app = (await client.getApps())[0];
   const notifaction = new OneSignal.Notification({
+    app_id: "fe711cfd-661b-452b-9d63-9e9d4cf56e44",
+    included_segments: ["All"],
     contents: {
       en: "Your device has been updated ya wala",
     },
