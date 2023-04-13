@@ -38,7 +38,13 @@ devicesRoutes.put("/devices/update", async (request, response) => {
 
   try {
     console.log("BEFORE NOTIFACTION");
-    const response = await client.createNotification(notification);
+    const response = await client.createNotification({
+      headings: {
+        en: "English Title",
+      },
+      contents: { en: "English Message" },
+      included_segments: ["All"],
+    });
     console.log(response?.body?.id || 1);
   } catch (e) {
     console.log("ERROR ON SENDING NOTIFICATION");
