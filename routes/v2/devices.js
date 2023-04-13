@@ -30,7 +30,29 @@ devicesRoutes.put("/devices/update", async (request, response) => {
   // notifaction.contents = { en: "Your device has been updated ya wala" };
   // notifaction.headings = { en: "Device Updated ya wala" };
 
-  console.log(await client.getApps());
+  const app = (await client.getApps())[0];
+  const notifaction = new OneSignal.Notification({
+    contents: {
+      en: "Your device has been updated ya wala",
+    },
+    headings: {
+      en: "Device Updated ya wala",
+    },
+  });
+
+  notifaction.postBody["app_id"] = app.id;
+  notifaction.postBody["included_segments"] = ["All"];
+  notifaction.postBody["data"] = { foo: "bar" };
+  notifaction.postBody["contents"] = { en: "English Message" };
+
+  client
+    .createNotification(notifaction)
+    .then((response) => {
+      console.log("Notification Created Success:", response);
+    })
+    .catch((err) => {
+      console.log("Notification Created Failed: ", err);
+    });
 
   const oldDeviceData = await getDeviceData(device.deviceId);
   const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
