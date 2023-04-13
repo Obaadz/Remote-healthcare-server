@@ -5,7 +5,7 @@ import {
   updateDevice,
   getDeviceData,
 } from "../../controllers/devices.js";
-import OneSignal from "@onesignal/node-onesignal";
+import OneSignal from "onesignal-node";
 
 const devicesRoutes = express.Router();
 
@@ -14,12 +14,18 @@ const devicesRoutes = express.Router();
 //   appKey: "YzUzZGFjYzEtOTk2My00ZWMxLWEwZDItOTNmY2ZlOGU3MWI3",
 // });
 
-let configuration = OneSignal.createConfiguration({
-  userKey: "ZjQxMWY4OWQtNGM0NC00MWJjLWI1YjgtODgxM2YxOTY3YTRm",
-  appKey: "YzUzZGFjYzEtOTk2My00ZWMxLWEwZDItOTNmY2ZlOGU3MWI3",
-});
+const client = new OneSignal.Client(
+  "fe711cfd-661b-452b-9d63-9e9d4cf56e44",
+  "YzUzZGFjYzEtOTk2My00ZWMxLWEwZDItOTNmY2ZlOGU3MWI3"
+);
 
-const client = new OneSignal.DefaultApi(configuration);
+const notification = {
+  contents: {
+    tr: "Yeni bildirim",
+    en: "New notification",
+  },
+  included_segments: ["Subscribed Users"],
+};
 
 // Update device data on the database and send it to client
 devicesRoutes.put("/devices/update", async (request, response) => {
@@ -30,26 +36,16 @@ devicesRoutes.put("/devices/update", async (request, response) => {
   // notifaction.contents = { en: "Your device has been updated ya wala" };
   // notifaction.headings = { en: "Device Updated ya wala" };
 
-  const app = (await client.getApps())[0];
-  const notifaction = new OneSignal.Notification({
-    app_id: "fe711cfd-661b-452b-9d63-9e9d4cf56e44",
-    included_segments: ["All"],
-    contents: {
-      en: "Your device has been updated ya wala",
-    },
-    headings: {
-      en: "Device Updated ya wala",
-    },
-  });
-
-  client
-    .createNotification(notifaction)
-    .then((response) => {
-      console.log("Notification Created Success:", response);
-    })
-    .catch((err) => {
-      console.log("Notification Created Failed: ", err);
-    });
+  try {
+    const response = await client.createNotification(notification);
+    console.log(response.body.id);
+  } catch (e) {
+    if (e instanceof OneSignal.HTTPError) {
+      // When status code of HTTP response is not 2xx, HTTPError is thrown.
+      console.log(e.statusCode);
+      console.log(e.body);
+    }
+  }
 
   const oldDeviceData = await getDeviceData(device.deviceId);
   const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
