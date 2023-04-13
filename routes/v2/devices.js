@@ -45,7 +45,8 @@ devicesRoutes.put("/devices/update", async (request, response) => {
       contents: { en: "English Message" },
       included_segments: ["All"],
     });
-    console.log(response?.body?.id || 1);
+
+    console.log(response);
   } catch (e) {
     console.log("ERROR ON SENDING NOTIFICATION");
     console.log(e.message);
