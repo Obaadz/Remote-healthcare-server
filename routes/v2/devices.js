@@ -40,11 +40,6 @@ devicesRoutes.put("/devices/update", async (request, response) => {
     },
   });
 
-  notifaction.postBody["app_id"] = app.id;
-  notifaction.postBody["included_segments"] = ["All"];
-  notifaction.postBody["data"] = { foo: "bar" };
-  notifaction.postBody["contents"] = { en: "English Message" };
-
   client
     .createNotification(notifaction)
     .then((response) => {
