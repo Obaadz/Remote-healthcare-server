@@ -5,12 +5,27 @@ import {
   updateDevice,
   getDeviceData,
 } from "../../controllers/devices.js";
+import OneSignal from "@onesignal/node-onesignal";
 
 const devicesRoutes = express.Router();
+
+const configuration = OneSignal.createConfiguration({
+  userKey: "ZjQxMWY4OWQtNGM0NC00MWJjLWI1YjgtODgxM2YxOTY3YTRm",
+  appKey: "YzUzZGFjYzEtOTk2My00ZWMxLWEwZDItOTNmY2ZlOGU3MWI3",
+});
+
+const OneSignalClient = new OneSignal.DefaultApi(configuration);
 
 // Update device data on the database and send it to client
 devicesRoutes.put("/devices/update", async (request, response) => {
   const device = request.body;
+  const notifaction = new OneSignal.Notification();
+
+  notifaction.app_id = "fe711cfd-661b-452b-9d63-9e9d4cf56e44";
+  notifaction.contents = { en: "Your device has been updated ya wala" };
+  notifaction.headings = { en: "Device Updated ya wala" };
+
+  await OneSignalClient.createNotification(notifaction);
 
   const oldDeviceData = await getDeviceData(device.deviceId);
   const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
