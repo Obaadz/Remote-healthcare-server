@@ -24,7 +24,7 @@ const notification = {
     tr: "Yeni bildirim",
     en: "New notification",
   },
-  included_segments: ["Subscribed Users"],
+  included_segments: ["All"],
 };
 
 // Update device data on the database and send it to client
@@ -37,8 +37,9 @@ devicesRoutes.put("/devices/update", async (request, response) => {
   // notifaction.headings = { en: "Device Updated ya wala" };
 
   try {
+    console.log("BEFORE NOTIFACTION");
     const response = await client.createNotification(notification);
-    console.log(response.body.id);
+    console.log(response?.body?.id || 1);
   } catch (e) {
     console.log("ERROR ON SENDING NOTIFICATION");
     console.log(e.message);
