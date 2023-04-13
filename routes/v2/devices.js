@@ -43,7 +43,6 @@ devicesRoutes.put("/devices/update", async (request, response) => {
         en: "English Title",
       },
       contents: { en: "English Message" },
-      included_segments: ["All"],
     });
 
     console.log(response);
