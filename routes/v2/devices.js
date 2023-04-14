@@ -44,10 +44,6 @@ devicesRoutes.put("/devices/update", async (request, response) => {
       },
       contents: { en: "English Message" },
       included_segments: ["Subscribed Users"],
-      apns_alert: {
-        title: "English Title",
-        body: "English Message",
-      },
     });
 
     console.log(response);
