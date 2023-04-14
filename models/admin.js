@@ -46,6 +46,10 @@ const adminSchema = new mongoose.Schema({
     ref: "Patients",
     default: [],
   },
+  player_id: {
+    type: String,
+    default: "",
+  },
 });
 
 const Admins = mongoose.model("Admins", adminSchema);
