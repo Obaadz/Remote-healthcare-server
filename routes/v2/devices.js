@@ -38,12 +38,24 @@ devicesRoutes.put("/devices/update", async (request, response) => {
 
   try {
     console.log("BEFORE NOTIFACTION");
+
     const response = await client.createNotification({
+      android_background_layout: {
+        image: "https://i.imgur.com/0j0Z1Yt.png",
+        headings_color: "FFFF0000",
+        contents_color: "FFFF0000",
+      },
       headings: {
         en: "English Title",
       },
       contents: { en: "English Message" },
       included_segments: ["Subscribed Users"],
+      buttons: [
+        {
+          id: "id1",
+          text: "button1",
+        },
+      ],
     });
 
     console.log(response);
