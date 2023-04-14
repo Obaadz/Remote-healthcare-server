@@ -45,7 +45,7 @@ devicesRoutes.put("/devices/update", async (request, response) => {
       },
       contents: { en: "English Message" },
       include_external_user_ids: ["123456789"],
-      included_segments: ["All"],
+      included_segments: ["Subscribed Users"],
     });
 
     console.log(response);
