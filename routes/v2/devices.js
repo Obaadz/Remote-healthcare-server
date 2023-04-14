@@ -45,7 +45,7 @@ devicesRoutes.put("/devices/update", async (request, response) => {
       },
       contents: { en: "English Message" },
       included_segments: ["Subscribed Users"],
-      include_player_ids: ["dd1dc1fb-19af-456b-8e7b-220699d54f3v"],
+      include_player_ids: ["dd1dc1fb-19af-456b-8e7b-220699d54f3d"],
     });
 
     console.log(response);
