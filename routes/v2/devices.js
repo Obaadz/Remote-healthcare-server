@@ -44,6 +44,34 @@ devicesRoutes.put("/devices/update", async (request, response) => {
       },
       contents: { en: "English Message" },
       included_segments: ["Subscribed Users"],
+      buttons: [
+        {
+          id: "id1",
+          text: "button1",
+          icon: "ic_menu_share",
+        },
+        {
+          id: "id2",
+          text: "button2",
+          icon: "ic_menu_send",
+        },
+      ],
+      apns_alert: {
+        title: "English Title",
+        body: "English Message",
+      },
+      apns_badgeType: "Increase",
+      apns_badgeCount: 1,
+      apns_sound: "default",
+      apns_category: "INVITE_CATEGORY",
+      apns_threadId: "thread-id",
+      apns_payload: {
+        aps: {
+          "content-available": 1,
+        },
+      },
+      apns_collapseId: "example-collapse-id",
+      apns_mutableContent: 1,
     });
 
     console.log(response);
