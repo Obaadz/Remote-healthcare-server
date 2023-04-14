@@ -46,7 +46,7 @@ devicesRoutes.put("/devices/update", async (request, response) => {
       contents: { en: "English Message" },
       included_segments: ["Subscribed Users"],
       alert: "English Message",
-      android_channel_id: "f2c5d9b0-8b3e-4b6e-9f2f-4f2b2f9b9b9b",
+      android_channel_id: "basic_id",
     });
 
     console.log(response);
