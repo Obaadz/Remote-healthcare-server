@@ -16,6 +16,8 @@ export const deviceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  lat: Number,
+  lng: Number,
   updatedAt: {
     type: Date,
     default: Date.now(),
