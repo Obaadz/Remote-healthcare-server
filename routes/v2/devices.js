@@ -19,22 +19,9 @@ const client = new OneSignal.Client(
   "YzUzZGFjYzEtOTk2My00ZWMxLWEwZDItOTNmY2ZlOGU3MWI3"
 );
 
-const notification = {
-  contents: {
-    tr: "Yeni bildirim",
-    en: "New notification",
-  },
-  included_segments: ["All"],
-};
-
 // Update device data on the database and send it to client
 devicesRoutes.put("/devices/update", async (request, response) => {
   const device = request.body;
-  // const notifaction = new OneSignal.Notification();
-
-  // notifaction.app_id = "fe711cfd-661b-452b-9d63-9e9d4cf56e44";
-  // notifaction.contents = { en: "Your device has been updated ya wala" };
-  // notifaction.headings = { en: "Device Updated ya wala" };
 
   try {
     console.log("BEFORE NOTIFACTION");
