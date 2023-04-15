@@ -22,8 +22,8 @@ export const insertAdmin = async (adminData) => {
 
 export const getAdminByEmailAndPassword = async (email, password) => {
   const [isSuccess, errMessage, data] = await Admins.findOne({ email, password })
-    .select("-password -__v")
-    .populate("patients", "-_id -player_id -password -device -__v")
+    .select("-password -__v -player_id")
+    .populate("patients", "-_id -reports -password -device -__v")
     .then((admin) => {
       if (admin) return [true, "", { admin }];
 
