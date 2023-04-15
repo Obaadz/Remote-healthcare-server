@@ -23,25 +23,6 @@ const client = new OneSignal.Client(
 devicesRoutes.put("/devices/update", async (request, response) => {
   const device = request.body;
 
-  try {
-    console.log("BEFORE NOTIFACTION");
-
-    const response = await client.createNotification({
-      headings: {
-        en: "English Title",
-      },
-      contents: { en: "English Message" },
-      include_player_ids: ["dd1dc1fb-19af-456b-8e7b-220699d54f3d"],
-    });
-
-    console.log(response);
-  } catch (e) {
-    console.log("ERROR ON SENDING NOTIFICATION");
-    console.log(e.message);
-    console.log(e.statusCode);
-    console.log(e.body);
-  }
-
   const oldDeviceData = await getDeviceData(device.deviceId);
   const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
@@ -49,6 +30,27 @@ devicesRoutes.put("/devices/update", async (request, response) => {
     failed();
     return;
   }
+
+  if (device.dataToUpdate.fall)
+    try {
+      console.log("BEFORE NOTIFACTION");
+
+      const response = await client.createNotification({
+        headings: {
+          en: "Patient is in danger",
+        },
+        contents: { en: "There is a patient or more in danger!" },
+        included_segments: ["Subscribed Users"],
+        // include_player_ids: ["dd1dc1fb-19af-456b-8e7b-220699d54f3d"],
+      });
+
+      console.log(response);
+    } catch (e) {
+      console.log("ERROR ON SENDING NOTIFICATION");
+      console.log(e.message);
+      console.log(e.statusCode);
+      console.log(e.body);
+    }
 
   console.log("DEVICE DATA TO UPDATE: ", device);
   const { isSuccess, errMessage } = await updateDevice(device);
@@ -113,6 +115,11 @@ devicesRoutes.put("/devices/update", async (request, response) => {
       (dataToUpdate.temperature < 35 || dataToUpdate.temperature > 40)
     )
       dataToUpdate.temperature = oldDeviceData.temperature || null;
+
+    if (!dataToUpdate.lat) {
+      dataToUpdate.lat = oldDeviceData.lat || 0;
+      dataToUpdate.lng = oldDeviceData.lng || 0;
+    }
     if (
       dataToUpdate.spo2 ||
       dataToUpdate.heartRate ||
