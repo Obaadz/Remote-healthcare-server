@@ -94,15 +94,16 @@ export const filterPatientsAlreadyAddedByAdminEmail = async (patients, adminEmai
 
   const filterdPatients = await Patients.find({
     _id: {
-      $nin: adminPatientsObjectIds,
-      $in: patients,
+      $nin: [...adminPatientsObjectIds],
+      $in: [...patients],
     },
   })
     .select("-password -__v")
     .populate("device", "-_id deviceId")
     .populate("adminsRequests", "-_id email")
     .lean();
-
+  console.log(patients);
+  console.log("FILTERD: ", filterdPatients);
   if (!filterdPatients || !filterdPatients.length) {
     return { patients: [] };
   }
