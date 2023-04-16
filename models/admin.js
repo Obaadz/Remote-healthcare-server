@@ -46,6 +46,11 @@ const adminSchema = new mongoose.Schema({
     ref: "Patients",
     default: [],
   },
+  emergencies: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Patients",
+    default: [],
+  },
   player_id: {
     type: String,
     default: "",

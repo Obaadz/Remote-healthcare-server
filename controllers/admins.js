@@ -85,3 +85,44 @@ export const cancelRequestToPatientByAdminEmail = async (adminEmail, deviceId) =
 
   return { isSuccess, errMessage, data };
 };
+
+export const getPatientAdminsByDeviceId = async (deviceId) => {
+  const patientDevice = await getDeviceByDeviceId(deviceId);
+  const patient = await Patients.exists({ device: patientDevice._id });
+
+  const adminsForPatient = await Admins.find({ patients: { $in: [patient._id] } }).select(
+    "-password -__v -player_id -patients"
+  );
+
+  return { adminsForPatient, patientObjId: patient._id };
+};
+
+export const addEmergencyToAllAdmins = async (deviceId) => {
+  const { adminsForPatient, patientObjId } = await getPatientAdminsByDeviceId(deviceId);
+
+  const [isSuccess, errMessage] = await Admins.updateMany(
+    { _id: { $in: adminsForPatient } },
+    { $addToSet: { emergencies: patientObjId } }
+  )
+    .then(() => [true, ""])
+    .catch((err) => [false, "Error in adding emergency"]);
+
+  return { isSuccess, errMessage };
+};
+
+export const getAdminById = async (id) => {
+  const [isSuccess, errMessage, data] = await Admins.findById(id)
+    .select("-password -__v -player_id -patients")
+    .populate({
+      path: "emergencies",
+      select: "-reports -adminsRequests -password -__v",
+      populate: {
+        path: "device",
+        select: "-__v",
+      },
+    })
+    .then((admin) => [true, "", { admin }])
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage, data };
+};

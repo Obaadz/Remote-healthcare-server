@@ -6,6 +6,7 @@ import {
   getDeviceData,
 } from "../../controllers/devices.js";
 import OneSignal from "onesignal-node";
+import { addEmergencyToAllAdmins } from "../../controllers/admins.js";
 
 const devicesRoutes = express.Router();
 
@@ -33,6 +34,8 @@ devicesRoutes.put("/devices/update", async (request, response) => {
 
   if (device.dataToUpdate.fall)
     try {
+      await addEmergencyToAllAdmins(device.deviceId);
+
       console.log("BEFORE NOTIFACTION");
 
       const response = await client.createNotification({

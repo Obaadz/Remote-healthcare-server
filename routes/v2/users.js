@@ -6,6 +6,8 @@ import {
   addPatientToAdminByAdminEmail,
   sendRequestToPatientByAdminEmail,
   cancelRequestToPatientByAdminEmail,
+  getPatientAdminsByDeviceId,
+  getAdminById,
 } from "../../controllers/admins.js";
 import {
   getPatientByDeviceIdAndPassword,
@@ -18,6 +20,12 @@ import { pusher } from "../../index.js";
 
 const patientsRoutes = express.Router();
 const adminsRoutes = express.Router();
+
+patientsRoutes.get("/test", async (request, response) => {
+  const { adminsForPatient } = await getPatientAdminsByDeviceId("123456789011");
+  console.log(adminsForPatient);
+  response.send("test");
+});
 
 patientsRoutes.get("/users/patients/signin", async (request, response) => {
   const { patientId } = request.query;
@@ -334,4 +342,29 @@ adminsRoutes.put("/users/admins/request_patient/accept", async (request, respons
     });
   }
 });
+
+adminsRoutes.get("/users/admins/:id", async (request, response) => {
+  const { id } = request.params;
+
+  const { isSuccess, errMessage, data } = await getAdminById(id);
+
+  if (isSuccess) successed(data);
+  else failed(errMessage);
+
+  function successed(data) {
+    response.send({
+      message: "admin search successed",
+      isSuccess: true,
+      data,
+    });
+  }
+
+  function failed(errMessage = "") {
+    response.send({
+      message: `admin search failed: ${errMessage}`,
+      isSuccess: false,
+    });
+  }
+});
+
 export { patientsRoutes, adminsRoutes };
