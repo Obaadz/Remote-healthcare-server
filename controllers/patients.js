@@ -71,7 +71,7 @@ export const searchPatientsByDeviceId = async (deviceId) => {
   const patients = await Patients.find({
     device: patientsDevices,
   })
-    .select("-password -__v -adminsRequests")
+    .select("-password -__v -adminsRequests -reports")
     .populate("device", "-_id deviceId");
 
   if (!patients || !patients.length) {
@@ -98,7 +98,7 @@ export const filterPatientsAlreadyAddedByAdminEmail = async (patients, adminEmai
       $in: [...patients],
     },
   })
-    .select("-password -__v")
+    .select("-password -__v -reports")
     .populate("device", "-_id deviceId")
     .populate("adminsRequests", "-_id email")
     .lean();
