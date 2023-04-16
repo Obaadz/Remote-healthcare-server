@@ -343,8 +343,8 @@ adminsRoutes.put("/users/admins/request_patient/accept", async (request, respons
   }
 });
 
-adminsRoutes.get("/users/admins/:id", async (request, response) => {
-  const { id } = request.params;
+adminsRoutes.get("/users/admins", async (request, response) => {
+  const { id } = request.query;
 
   const { isSuccess, errMessage, data } = await getAdminById(id);
 
