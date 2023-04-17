@@ -116,6 +116,34 @@ export const filterPatientsAlreadyAddedByAdminEmail = async (patients, adminEmai
   return { patients: filteredPatientsWithIsRequestedAlready };
 };
 
+export const generateReportsForAllPatients = async () => {
+  const patients = await Patients.find({}).populate(
+    "device",
+    "-_id heartRate spo2 temperature updatedAt"
+  );
+
+  for (const patient of patients) {
+    const reportsLength = patient.reports.length;
+    const isReportAlreadyGenerated =
+      reportsLength > 0
+        ? patient.reports[reportsLength - 1].createdAt.getTime() ==
+          patient.device.updatedAt.getTime()
+        : false;
+
+    if (!isReportAlreadyGenerated)
+      await patient.updateOne({
+        $push: {
+          reports: {
+            spo2: patient.device.spo2,
+            heartRate: patient.device.heartRate,
+            temperature: patient.device.temperature,
+            createdAt: new Date(patient.device.updatedAt),
+          },
+        },
+      });
+  }
+};
+
 // Utils functions for patients:
 
 /**

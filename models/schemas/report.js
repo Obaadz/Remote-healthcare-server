@@ -1,13 +1,10 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export const reportSchema = new mongoose.Schema({
   spo2: Number,
   heartRate: Number,
   temperature: Number,
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-  },
+  createdAt: Date,
 });
 
 export default reportSchema;

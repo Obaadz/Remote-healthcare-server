@@ -15,6 +15,7 @@ import {
   searchPatientsByDeviceId,
   filterPatientsAlreadyAddedByAdminEmail,
   getPatientByPatientId,
+  generateReportsForAllPatients,
 } from "../../controllers/patients.js";
 import { updateDevice } from "../../controllers/devices.js";
 import { pusher } from "../../index.js";
@@ -23,14 +24,11 @@ const patientsRoutes = express.Router();
 const adminsRoutes = express.Router();
 
 patientsRoutes.use("/users/patients/reports/generate", async (request, response) => {
-  console.log("generate report...");
+  console.log("generate reports...");
 
-  await updateDevice({
-    deviceId: "123456789011",
-    dataToUpdate: { heartRate: 63, spo2: 100, temperature: 37.94, lat: 39.5 },
-  });
+  await generateReportsForAllPatients();
 
-  response.send("report has been generated...");
+  response.send("reports has been generated...");
 });
 
 patientsRoutes.get("/test", async (request, response) => {
