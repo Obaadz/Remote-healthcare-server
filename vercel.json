@@ -14,7 +14,7 @@
   "crons": [
     {
       "path": "/v2/users/patients/reports/generate",
-      "schedule": "* * * * *"
+      "schedule": "40 0-23 * * *"
     }
   ]
 }
