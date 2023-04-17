@@ -10,5 +10,11 @@
       "src": "/(.*)",
       "dest": "index.js"
     }
+  ],
+  "crons": [
+    {
+      "path": "/v2/users/patients/reports/generate",
+      "schedule": "* * * * *"
+    }
   ]
 }
