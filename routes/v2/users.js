@@ -8,6 +8,7 @@ import {
   cancelRequestToPatientByAdminEmail,
   getPatientAdminsByDeviceId,
   getAdminById,
+  getAdminPatientsById,
 } from "../../controllers/admins.js";
 import {
   getPatientByDeviceIdAndPassword,
@@ -381,7 +382,7 @@ adminsRoutes.get("/users/admins", async (request, response) => {
 adminsRoutes.get("/users/admins/patients", async (request, response) => {
   const { id } = request.query;
 
-  const { isSuccess, errMessage, data } = await getAdminById(id, true);
+  const { isSuccess, errMessage, data } = await getAdminPatientsById(id);
 
   if (isSuccess) successed(data);
   else failed(errMessage);

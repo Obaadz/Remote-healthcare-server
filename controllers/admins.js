@@ -126,3 +126,17 @@ export const getAdminById = async (id, includePatients = false) => {
 
   return { isSuccess, errMessage, data };
 };
+
+export const getAdminPatientsById = async (id) => {
+  const [isSuccess, errMessage, data] = await Admins.findById(id)
+    .select("-password -__v -player_id")
+    .populate("patients", "-_id -adminsRequests -password -device -__v")
+    .then((admin) => {
+      if (admin) return [true, "", { admin }];
+
+      return [false, "email or password is incorrect"];
+    })
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage, data };
+};
