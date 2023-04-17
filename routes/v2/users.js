@@ -21,6 +21,12 @@ import { pusher } from "../../index.js";
 const patientsRoutes = express.Router();
 const adminsRoutes = express.Router();
 
+patientsRoutes.use("/users/patients/reports/generate", async (request, response) => {
+  console.log("generate report...");
+
+  response.send("report has been generated...");
+});
+
 patientsRoutes.get("/test", async (request, response) => {
   const { adminsForPatient } = await getPatientAdminsByDeviceId("123456789011");
   console.log(adminsForPatient);
