@@ -54,7 +54,13 @@ export const getPatientByPatientId = async (patientId) => {
     throw new Error("patient not found");
   }
 
-  return { patient };
+  const patientAdmins = await Admins.find({
+    patients: {
+      $in: [patient._id],
+    },
+  }).select("-_id username role phoneNumber email");
+
+  return { patient, patientAdmins };
 };
 
 /**
