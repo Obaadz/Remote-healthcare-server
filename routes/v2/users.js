@@ -378,4 +378,28 @@ adminsRoutes.get("/users/admins", async (request, response) => {
   }
 });
 
+adminsRoutes.get("/users/admins/patients", async (request, response) => {
+  const { id } = request.query;
+
+  const { isSuccess, errMessage, data } = await getAdminById(id, true);
+
+  if (isSuccess) successed(data);
+  else failed(errMessage);
+
+  function successed(data) {
+    response.send({
+      message: "admin search successed",
+      isSuccess: true,
+      data,
+    });
+  }
+
+  function failed(errMessage = "") {
+    response.send({
+      message: `admin search failed: ${errMessage}`,
+      isSuccess: false,
+    });
+  }
+});
+
 export { patientsRoutes, adminsRoutes };
