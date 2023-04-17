@@ -104,7 +104,8 @@ devicesRoutes.put("/devices/update", async (request, response) => {
 
     return pusher.trigger(`user-${deviceId}`, "user-data-changed", {
       message: "receiving new device data",
-      ...dataToUpdate,
+      heartRate: dataToUpdate.heartRate,
+      spo2: dataToUpdate.spo2,
       temperature: dataToUpdate.temperature
         ? dataToUpdate?.temperature?.toString()
         : null,
