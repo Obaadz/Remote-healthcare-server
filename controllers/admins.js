@@ -110,12 +110,12 @@ export const addEmergencyToAllAdmins = async (deviceId) => {
   return { isSuccess, errMessage };
 };
 
-export const getAdminById = async (id) => {
+export const getAdminById = async (id, includePatients = false) => {
   const [isSuccess, errMessage, data] = await Admins.findById(id)
-    .select("-password -__v -player_id -patients")
+    .select(`-password -__v -player_id ${includePatients ? "-emergencies" : "-patients"}`)
     .populate({
-      path: "emergencies",
-      select: "-reports -adminsRequests -password -__v",
+      path: includePatients ? "patients" : "emergencies",
+      select: `${includePatients ? "" : "-reports"} -adminsRequests -password -__v`,
       populate: {
         path: "device",
         select: "-__v",

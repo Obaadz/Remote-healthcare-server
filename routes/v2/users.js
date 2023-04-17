@@ -355,8 +355,9 @@ adminsRoutes.put("/users/admins/request_patient/accept", async (request, respons
 
 adminsRoutes.get("/users/admins", async (request, response) => {
   const { id } = request.query;
+  const { includePatients } = request.query;
 
-  const { isSuccess, errMessage, data } = await getAdminById(id);
+  const { isSuccess, errMessage, data } = await getAdminById(id, includePatients == 1);
 
   if (isSuccess) successed(data);
   else failed(errMessage);
