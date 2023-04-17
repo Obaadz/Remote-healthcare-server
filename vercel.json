@@ -15,6 +15,10 @@
     {
       "path": "/v2/users/patients/reports/generate",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/v2/users/patients/reports/generate",
+      "schedule": "0 20 * * *"
     }
   ]
 }
