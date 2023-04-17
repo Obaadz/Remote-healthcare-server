@@ -97,9 +97,9 @@ devicesRoutes.put("/devices/update", async (request, response) => {
 
   function sendDataToClient(deviceId, dataToUpdate) {
     if (dataToUpdate.heartRateValid === 0 || SPO2Valid === 0) {
-      dataToUpdate.spo2 = -999;
-      dataToUpdate.heartRate = -999;
-      dataToUpdate.temperature = "-999";
+      dataToUpdate.spo2 = null;
+      dataToUpdate.heartRate = null;
+      dataToUpdate.temperature = null;
     }
 
     return pusher.trigger(`user-${deviceId}`, "user-data-changed", {
