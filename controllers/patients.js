@@ -48,7 +48,7 @@ export const getPatientByPatientId = async (patientId) => {
   })
     .select("-password -__v -reports")
     .populate("device", "-_id -updatedAt")
-    .populate("adminsRequests", "-_id -__v -password -patients");
+    .populate("adminsRequests", "-_id -__v -password -patients -player_id -emergencies ");
 
   if (!patient) {
     throw new Error("patient not found");
