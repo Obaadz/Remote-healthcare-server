@@ -100,7 +100,7 @@ devicesRoutes.put("/devices/update", async (request, response) => {
       !dataToUpdate.heartRateValid ||
       !dataToUpdate.SPO2Valid ||
       dataToUpdate.heartRateValid === 0 ||
-      SPO2Valid === 0
+      dataToUpdate.SPO2Valid === 0
     ) {
       dataToUpdate.spo2 = -999;
       dataToUpdate.heartRate = -999;
