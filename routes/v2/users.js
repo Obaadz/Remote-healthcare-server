@@ -358,11 +358,13 @@ adminsRoutes.get("/users/admins", async (request, response) => {
   const { id } = request.query;
   const { includePatients } = request.query;
 
+  console.log("ID :", id);
+
   const { isSuccess, errMessage, data } = await getAdminById(id, includePatients == 1);
 
   if (isSuccess) successed(data);
   else failed(errMessage);
-
+  console.log("DATA :", data);
   function successed(data) {
     response.send({
       message: "admin search successed",

@@ -102,7 +102,7 @@ export const addEmergencyToAllAdmins = async (deviceId) => {
 
   const [isSuccess, errMessage] = await Admins.updateMany(
     { _id: { $in: adminsForPatient } },
-    { $addToSet: { emergencies: patientObjId } }
+    { $push: { emergencies: patientObjId } }
   )
     .then(() => [true, ""])
     .catch((err) => [false, "Error in adding emergency"]);
