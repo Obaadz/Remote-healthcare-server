@@ -1,3 +1,15 @@
+import { checkDeviceValidation } from "../services/devices.js";
+import {
+  getAdminByEmailAndPassword,
+  insertAdmin,
+  addPatientToAdminByAdminEmail,
+  sendRequestToPatientByAdminEmail,
+  cancelRequestToPatientByAdminEmail,
+  getAdminById,
+  getAdminPatientsById,
+} from "../services/admins.js";
+import { pusher } from "../index.js";
+
 export default class AdminController {
   static async signup(req, res) {
     const admin = req.body;

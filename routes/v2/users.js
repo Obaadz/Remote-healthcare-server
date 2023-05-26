@@ -1,15 +1,4 @@
 import express from "express";
-import { checkDeviceValidation } from "../../services/devices.js";
-import {
-  getAdminByEmailAndPassword,
-  insertAdmin,
-  addPatientToAdminByAdminEmail,
-  sendRequestToPatientByAdminEmail,
-  cancelRequestToPatientByAdminEmail,
-  getAdminById,
-  getAdminPatientsById,
-} from "../../services/admins.js";
-import { pusher } from "../../index.js";
 import PatientController from "../../controllers/patientController.js";
 import AdminController from "../../controllers/adminController.js";
 
