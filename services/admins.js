@@ -121,7 +121,12 @@ export const getAdminById = async (id, includePatients = false) => {
         select: "-__v",
       },
     })
-    .then((admin) => [true, "", { admin }])
+    .then((admin) => {
+      console.log("getAdminById");
+      console.log(admin.emergencies);
+
+      return [true, "", { admin }];
+    })
     .catch((err) => [false, err.message]);
 
   return { isSuccess, errMessage, data };

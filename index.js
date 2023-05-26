@@ -4,6 +4,7 @@ import cors from "cors";
 import v2Routes from "./routes/v2/index.js";
 import "dotenv/config";
 import Pusher from "pusher";
+import OneSignal from "onesignal-node";
 
 const PORT = process.env.PORT || 5000;
 
@@ -26,6 +27,11 @@ export const pusher = new Pusher({
   cluster: "eu",
   useTLS: true,
 });
+
+export const signalClient = new OneSignal.Client(
+  "fe711cfd-661b-452b-9d63-9e9d4cf56e44",
+  "YzUzZGFjYzEtOTk2My00ZWMxLWEwZDItOTNmY2ZlOGU3MWI3"
+);
 
 await mongoose
   .connect(process.env.DB_URI, {
