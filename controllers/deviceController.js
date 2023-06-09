@@ -7,6 +7,9 @@ import { getPatientByDeviceId } from "../services/patients.js";
 export default class DeviceController {
   static async update(req, res) {
     const device = req.body;
+    const {
+      data: { patient },
+    } = await getPatientByDeviceId(device.deviceId);
     const oldDeviceData = await getDeviceData(device.deviceId);
     const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
@@ -17,10 +20,6 @@ export default class DeviceController {
 
     if (device.dataToUpdate.fall)
       try {
-        const {
-          data: { patient },
-        } = await getPatientByDeviceId(device.deviceId);
-
         await addEmergencyToAllAdmins(device.deviceId);
 
         console.log("SENDING NOTIFACTION...");
@@ -41,7 +40,7 @@ export default class DeviceController {
     else failed(errMessage);
 
     function successed() {
-      sendDataToClient(device.deviceId, device.dataToUpdate)
+      sendDataToClient(patient.phoneNumber, device.dataToUpdate)
         .then(() => {
           console.log("DATA HAS BEEN SENTED TO CLIENT");
 
@@ -74,14 +73,14 @@ export default class DeviceController {
       });
     }
 
-    function sendDataToClient(deviceId, dataToUpdate) {
+    function sendDataToClient(phoneNumber, dataToUpdate) {
       if (!dataToUpdate.heartRateValid || !dataToUpdate.SPO2Valid) {
         dataToUpdate.spo2 = -999;
         dataToUpdate.heartRate = -999;
         dataToUpdate.temperature = "-999";
       }
 
-      return pusher.trigger(`user-${deviceId}`, "user-data-changed", {
+      return pusher.trigger(`user-${phoneNumber}`, "user-data-changed", {
         message: "receiving new device data",
         heartRate: dataToUpdate.heartRate,
         spo2: dataToUpdate.spo2,
