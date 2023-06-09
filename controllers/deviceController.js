@@ -17,8 +17,10 @@ export default class DeviceController {
 
     if (device.dataToUpdate.fall)
       try {
-        const { data: patient } = await getPatientByDeviceId(device.deviceId);
-        console.log("PATIENT: ", patient);
+        const {
+          data: { patient },
+        } = await getPatientByDeviceId(device.deviceId);
+
         await addEmergencyToAllAdmins(device.deviceId);
 
         console.log("SENDING NOTIFACTION...");
