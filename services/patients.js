@@ -42,6 +42,25 @@ export const getPatientByDeviceIdAndPassword = async (deviceId, password) => {
   return { isSuccess, errMessage, data };
 };
 
+export const getPatientByDeviceId = async (deviceId) => {
+  const patientDevice = await getDeviceByDeviceId(deviceId);
+
+  const [isSuccess, errMessage, data] = await Patients.findOne({
+    device: patientDevice._id,
+  })
+    .select("-password -__v -reports")
+    .populate("device", "-_id -updatedAt")
+    .populate("adminsRequests", "-_id -__v -password -patients")
+    .then((patient) => {
+      if (patient) return [true, "", { patient }];
+
+      return [false, "password is incorrect"];
+    })
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage, data };
+};
+
 export const getPatientByPatientId = async (patientId) => {
   const patient = await Patients.findOne({
     _id: patientId,

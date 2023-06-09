@@ -1,11 +1,12 @@
-import { pusher, signalClient } from "../index.js";
+import { pusher } from "../index.js";
 import { updateDevice, getDeviceData } from "../services/devices.js";
 import { addEmergencyToAllAdmins } from "../services/admins.js";
+import { sendNotificationToAdmins } from "../services/notification.js";
+import { getPatientByDeviceId } from "../services/patients.js";
 
 export default class DeviceController {
   static async update(req, res) {
     const device = req.body;
-
     const oldDeviceData = await getDeviceData(device.deviceId);
     const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
@@ -16,17 +17,17 @@ export default class DeviceController {
 
     if (device.dataToUpdate.fall)
       try {
+        const { data: patient } = await getPatientByDeviceId(device.deviceId);
+
         await addEmergencyToAllAdmins(device.deviceId);
 
         console.log("SENDING NOTIFACTION...");
 
-        const res = await signalClient.createNotification({
-          headings: {
-            en: "Patient is in danger",
-          },
-          contents: { en: "There is a patient in danger!" },
-          included_segments: ["Subscribed Users"],
-        });
+        await sendNotificationToAdmins(
+          `Patient ${patient.username} is in danger!`,
+          "Fall Detected",
+          "Subscribed Users"
+        );
       } catch (e) {
         console.log("ERROR ON SENDING NOTIFICATION", e.message);
       }
@@ -72,12 +73,7 @@ export default class DeviceController {
     }
 
     function sendDataToClient(deviceId, dataToUpdate) {
-      if (
-        !dataToUpdate.heartRateValid ||
-        !dataToUpdate.SPO2Valid ||
-        dataToUpdate.heartRateValid === 0 ||
-        dataToUpdate.SPO2Valid === 0
-      ) {
+      if (!dataToUpdate.heartRateValid || !dataToUpdate.SPO2Valid) {
         dataToUpdate.spo2 = -999;
         dataToUpdate.heartRate = -999;
         dataToUpdate.temperature = "-999";
@@ -99,11 +95,11 @@ export default class DeviceController {
         (dataToUpdate.heartRate < 60 || dataToUpdate.heartRate > 115)
       )
         dataToUpdate.heartRate = oldDeviceData.heartRate || null;
-      if (dataToUpdate.spo2 && (dataToUpdate.spo2 < 90 || dataToUpdate.spo2 > 100))
+      if (dataToUpdate.spo2 && (dataToUpdate.spo2 < 95 || dataToUpdate.spo2 > 100))
         dataToUpdate.spo2 = oldDeviceData.spo2 || null;
       if (
         dataToUpdate.temperature &&
-        (dataToUpdate.temperature < 35 || dataToUpdate.temperature > 40)
+        (dataToUpdate.temperature < 37 || dataToUpdate.temperature > 40)
       )
         dataToUpdate.temperature = oldDeviceData.temperature || null;
 
