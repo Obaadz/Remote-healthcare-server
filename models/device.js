@@ -11,7 +11,7 @@ export const deviceSchema = new mongoose.Schema({
   },
   spo2: { type: Number, default: 97 },
   heartRate: { type: Number, default: 86 },
-  temperature: { type: Number, default: 37 },
+  temperature: { type: String, default: "37" },
   fall: {
     type: Boolean,
     default: false,
