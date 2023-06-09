@@ -26,8 +26,7 @@ export default class DeviceController {
 
         await sendNotificationToAdmins(
           `Patient ${patient.username} is in danger!`,
-          "Fall Detected",
-          "Subscribed Users"
+          "Fall Detected"
         );
       } catch (e) {
         console.log("ERROR ON SENDING NOTIFICATION", e.message);
