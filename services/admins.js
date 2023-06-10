@@ -1,6 +1,7 @@
 import Admins from "../models/admin.js";
 import Patients from "../models/patient.js";
 import { getDeviceByDeviceId } from "./devices.js";
+import { getPatientByDeviceId } from "./patients.js";
 
 export const insertAdmin = async (adminData) => {
   const Admin = new Admins({
@@ -84,6 +85,21 @@ export const cancelRequestToPatientByAdminEmail = async (adminEmail, deviceId) =
     .catch((err) => [false, err.message]);
 
   return { isSuccess, errMessage, data };
+};
+
+export const cancelPatientFromAdminByDeviceId = async (deviceId, adminEmail) => {
+  const {
+    data: { patient },
+  } = await getPatientByDeviceId(deviceId);
+
+  const [isSuccess, errMessage] = await Admins.findOneAndUpdate(
+    { adminEmail },
+    { $pull: { patients: patient._id } }
+  )
+    .then((patient) => [true, ""])
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage };
 };
 
 export const getPatientAdminsByDeviceId = async (deviceId) => {

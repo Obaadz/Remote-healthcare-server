@@ -7,6 +7,7 @@ import {
   cancelRequestToPatientByAdminEmail,
   getAdminById,
   getAdminPatientsById,
+  cancelPatientFromAdminByDeviceId,
 } from "../services/admins.js";
 import { pusher } from "../index.js";
 
@@ -198,6 +199,39 @@ export default class AdminController {
       return pusher.trigger(`user-${deviceId}`, "user-data-changed", {
         message: "receiving new length of adminsRequests",
         adminsRequestsLength,
+      });
+    }
+  }
+
+  static async cancelPatientFromAdminList(req, res) {
+    const isDeviceExist = await checkDeviceValidation(req.body.deviceId);
+    if (!isDeviceExist) {
+      failed("deviceId is not exist");
+      return;
+    }
+
+    console.log(req.body);
+
+    const { isSuccess, errMessage } = await cancelPatientFromAdminByDeviceId(
+      req.body.deviceId,
+      req.body.adminEmail
+    );
+
+    if (isSuccess) {
+      successed();
+    } else failed(errMessage);
+
+    function successed() {
+      res.send({
+        message: "patient has been removed from admin list successed",
+        isSuccess: true,
+      });
+    }
+
+    function failed(errMessage = "") {
+      res.send({
+        message: `patient removed from admin list failed: ${errMessage}`,
+        isSuccess: false,
       });
     }
   }

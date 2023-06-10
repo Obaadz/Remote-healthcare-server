@@ -24,6 +24,10 @@ adminsRoutes.post("/users/admins/signin", AdminController.signin);
 adminsRoutes.put("/users/admins/request_patient", AdminController.requestSend);
 
 adminsRoutes.put("/users/admins/request_patient/cancel", AdminController.requestCancel);
+adminsRoutes.put(
+  "/users/admins/cancel_patient",
+  AdminController.cancelPatientFromAdminList
+);
 
 adminsRoutes.put("/users/admins/request_patient/accept", AdminController.requestAccept);
 
