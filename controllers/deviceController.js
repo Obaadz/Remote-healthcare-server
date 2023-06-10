@@ -1,10 +1,25 @@
 import { pusher } from "../index.js";
-import { updateDevice, getDeviceData } from "../services/devices.js";
+import { updateDevice, getDeviceData, insertDevice } from "../services/devices.js";
 import { addEmergencyToAllAdmins } from "../services/admins.js";
 import { sendNotificationToAdmins } from "../services/notification.js";
 import { getPatientByDeviceId } from "../services/patients.js";
 
 export default class DeviceController {
+  static async addNewDevice(req, res) {
+    const deviceData = req.body;
+
+    console.log("deviceData", deviceData);
+    try {
+      const { isSuccess, errMessage } = await insertDevice(deviceData);
+
+      if (!isSuccess) throw new Error(errMessage);
+
+      res.send("new device has been added");
+    } catch (err) {
+      res.send(`error while inserting device: ${err.message}`);
+    }
+  }
+
   static async update(req, res) {
     const device = req.body;
     const {

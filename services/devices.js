@@ -52,6 +52,19 @@ export const updateFields = async (request, response) => {
   }
 };
 
+export const insertDevice = async (deviceData) => {
+  const device = new Devices({
+    deviceId: deviceData.deviceId,
+  });
+
+  const [isSuccess, errMessage] = await device
+    .save()
+    .then(() => [true, ""])
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage };
+};
+
 export const updateDevice = async (deviceData) => {
   const [isSuccess, errMessage] = await Devices.updateOne(
     { deviceId: deviceData.deviceId },
