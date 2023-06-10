@@ -205,12 +205,6 @@ export default class AdminController {
   }
 
   static async cancelPatientFromAdminList(req, res) {
-    const isDeviceExist = await checkDeviceValidation(req.body.deviceId);
-    if (!isDeviceExist) {
-      failed("deviceId is not exist");
-      return;
-    }
-
     console.log(req.body);
 
     const { isSuccess, errMessage } = req.body.deviceId
