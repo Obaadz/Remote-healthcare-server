@@ -2,7 +2,7 @@ import { pusher } from "../index.js";
 import { updateDevice, getDeviceData, insertDevice } from "../services/devices.js";
 import { addEmergencyToAllAdmins } from "../services/admins.js";
 import { sendNotificationToAdmins } from "../services/notification.js";
-import { getPatientByDeviceId } from "../services/patients.js";
+import { generateReportForPatient, getPatientByDeviceId } from "../services/patients.js";
 
 export default class DeviceController {
   static async addNewDevice(req, res) {
@@ -79,6 +79,8 @@ export default class DeviceController {
           `Patient ${patient.username} is in danger!`,
           message
         );
+
+        await generateReportForPatient(patient);
       } catch (e) {
         console.log("ERROR ON SENDING NOTIFICATION", e.message);
       }
