@@ -25,8 +25,11 @@ export default class DeviceController {
     const {
       data: { patient },
     } = await getPatientByDeviceId(device.deviceId);
+
     const oldDeviceData = await getDeviceData(device.deviceId);
-    const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
+
+    handleDataToUpdate(device.dataToUpdate, oldDeviceData);
+
     const isAbnormalData =
       device.dataToUpdate.SPO2 < 95 ||
       device.dataToUpdate.temperature > 37.5 ||
@@ -34,7 +37,7 @@ export default class DeviceController {
       device.dataToUpdate.heartRate > 120 ||
       device.dataToUpdate.heartRate < 60;
 
-    if (!oldDeviceData || !isDataToUpdateExist) {
+    if (!oldDeviceData) {
       failed();
       return;
     }
