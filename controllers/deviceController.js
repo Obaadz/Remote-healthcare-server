@@ -28,7 +28,7 @@ export default class DeviceController {
 
     const oldDeviceData = await getDeviceData(device.deviceId);
 
-    handleDataToUpdate(device.dataToUpdate, oldDeviceData);
+    // handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
     const isAbnormalData =
       device.dataToUpdate.SPO2 < 95 ||
@@ -50,8 +50,7 @@ export default class DeviceController {
 
         await sendNotificationToAdmins(
           `Patient ${patient.username} is in danger!`,
-          "Fall Detected",
-          "fall"
+          "Fall Detected"
         );
       } catch (e) {
         console.log("ERROR ON SENDING NOTIFICATION", e.message);
@@ -78,8 +77,7 @@ export default class DeviceController {
 
         await sendNotificationToAdmins(
           `Patient ${patient.username} is in danger!`,
-          message,
-          "report"
+          message
         );
       } catch (e) {
         console.log("ERROR ON SENDING NOTIFICATION", e.message);
