@@ -31,11 +31,13 @@ export default class DeviceController {
     // handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
     const isAbnormalData =
-      device.dataToUpdate.spo2 < 95 ||
-      device.dataToUpdate.temperature > 37.5 ||
-      device.dataToUpdate.temperature < 36 ||
-      device.dataToUpdate.heartRate > 120 ||
-      device.dataToUpdate.heartRate < 60;
+      device.dataToUpdate.heartRateValid &&
+      device.dataToUpdate.SPO2Valid &&
+      (device.dataToUpdate.spo2 < 95 ||
+        device.dataToUpdate.temperature > 37.5 ||
+        device.dataToUpdate.temperature < 36 ||
+        device.dataToUpdate.heartRate > 120 ||
+        device.dataToUpdate.heartRate < 60);
 
     if (!oldDeviceData) {
       failed();
