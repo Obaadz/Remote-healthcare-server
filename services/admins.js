@@ -93,7 +93,7 @@ export const cancelPatientFromAdminByDeviceId = async (deviceId, adminEmail) => 
   } = await getPatientByDeviceId(deviceId);
 
   const [isSuccess, errMessage] = await Admins.findOneAndUpdate(
-    { adminEmail },
+    { email: adminEmail },
     { $pull: { patients: patient._id } }
   )
     .then((patient) => [true, ""])
@@ -108,7 +108,7 @@ export const cancelPatientFromAdminByPhoneNumber = async (phoneNumber, adminEmai
   } = await getPatientByPhoneNumber(phoneNumber);
 
   const [isSuccess, errMessage] = await Admins.findOneAndUpdate(
-    { adminEmail },
+    { email: adminEmail },
     { $pull: { patients: patient._id } }
   )
     .then((patient) => [true, ""])

@@ -22,9 +22,10 @@ export default class DeviceController {
 
   static async update(req, res) {
     const device = req.body;
+
     const {
       data: { patient },
-    } = await getPatientByDeviceId(device.deviceId);
+    } = await getPatientByDeviceId(device.deviceId, true);
 
     const oldDeviceData = await getDeviceData(device.deviceId);
 

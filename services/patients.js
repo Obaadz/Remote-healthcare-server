@@ -42,14 +42,14 @@ export const getPatientByDeviceIdAndPassword = async (deviceId, password) => {
   return { isSuccess, errMessage, data };
 };
 
-export const getPatientByDeviceId = async (deviceId) => {
+export const getPatientByDeviceId = async (deviceId, withUpdatedAt = false) => {
   const patientDevice = await getDeviceByDeviceId(deviceId);
 
   const [isSuccess, errMessage, data] = await Patients.findOne({
     device: patientDevice._id,
   })
     .select("-password -__v -reports")
-    .populate("device", "-_id -updatedAt -__v")
+    .populate("device", `-_id${withUpdatedAt ? "" : " -updatedAt"} -__v`)
     .populate("adminsRequests", "-_id -__v -password -patients")
     .then((patient) => {
       if (patient) return [true, "", { patient }];
@@ -187,7 +187,8 @@ export const generateReportsForAllPatients = async () => {
 };
 
 export const generateReportForPatient = async (patient) => {
-  const reportsLength = patient.reports.length;
+  const reportsLength = patient.reports ? patient.reports.length : 0;
+
   const isReportAlreadyGenerated =
     reportsLength > 0
       ? patient.reports[reportsLength - 1].createdAt.getTime() ==
