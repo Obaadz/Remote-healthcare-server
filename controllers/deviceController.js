@@ -31,7 +31,7 @@ export default class DeviceController {
     // handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
     const isAbnormalData =
-      device.dataToUpdate.SPO2 < 95 ||
+      device.dataToUpdate.spo2 < 95 ||
       device.dataToUpdate.temperature > 37.5 ||
       device.dataToUpdate.temperature < 36 ||
       device.dataToUpdate.heartRate > 120 ||
@@ -57,7 +57,7 @@ export default class DeviceController {
       }
     else if (isAbnormalData)
       try {
-        const isSPO2Abnormal = device.dataToUpdate.SPO2 < 95,
+        const isSPO2Abnormal = device.dataToUpdate.spo2 < 95,
           isHeartRateAbnormal =
             device.dataToUpdate.heartRate < 60 || device.dataToUpdate.heartRate > 120,
           isTemperatureAbnormal =
@@ -65,7 +65,7 @@ export default class DeviceController {
             device.dataToUpdate.temperature < 36;
 
         let message = ``;
-        message += isSPO2Abnormal ? `Abnormal SPO2: ${device.dataToUpdate.SPO2}\n` : "";
+        message += isSPO2Abnormal ? `Abnormal SPO2: ${device.dataToUpdate.spo2}\n` : "";
         message += isHeartRateAbnormal
           ? `Abnormal HeartRate: ${device.dataToUpdate.heartRate}\n`
           : "";
