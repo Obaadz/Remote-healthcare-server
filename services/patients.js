@@ -30,7 +30,7 @@ export const getPatientByDeviceIdAndPassword = async (deviceId, password) => {
     password,
   })
     .select("-password -__v -reports")
-    .populate("device", "-_id -updatedAt")
+    .populate("device", "-_id -updatedAt -__v")
     .populate("adminsRequests", "-_id -__v -password -patients")
     .then((patient) => {
       if (patient) return [true, "", { patient }];
@@ -49,7 +49,7 @@ export const getPatientByDeviceId = async (deviceId) => {
     device: patientDevice._id,
   })
     .select("-password -__v -reports")
-    .populate("device", "-_id -updatedAt")
+    .populate("device", "-_id -updatedAt -__v")
     .populate("adminsRequests", "-_id -__v -password -patients")
     .then((patient) => {
       if (patient) return [true, "", { patient }];
@@ -66,7 +66,7 @@ export const getPatientByPatientId = async (patientId) => {
     _id: patientId,
   })
     .select("-password -__v -reports")
-    .populate("device", "-_id -updatedAt")
+    .populate("device", "-_id -updatedAt -__v")
     .populate("adminsRequests", "-_id -__v -password -patients -player_id -emergencies ");
 
   if (!patient) {
