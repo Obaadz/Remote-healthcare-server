@@ -90,7 +90,7 @@ export default class DeviceController {
     else failed(errMessage);
 
     function successed() {
-      sendDataToClient(patient.phoneNumber, device.dataToUpdate)
+      sendDataToClient(device.deviceId, patient.phoneNumber, device.dataToUpdate)
         .then(() => {
           console.log("DATA HAS BEEN SENTED TO CLIENT");
 
@@ -123,21 +123,25 @@ export default class DeviceController {
       });
     }
 
-    function sendDataToClient(phoneNumber, dataToUpdate) {
+    function sendDataToClient(deviceId, phoneNumber, dataToUpdate) {
       if (!dataToUpdate.heartRateValid || !dataToUpdate.SPO2Valid) {
         dataToUpdate.spo2 = -999;
         dataToUpdate.heartRate = -999;
         dataToUpdate.temperature = "-999";
       }
 
-      return pusher.trigger(`user-${phoneNumber}`, "user-data-changed", {
-        message: "receiving new device data",
-        heartRate: dataToUpdate.heartRate,
-        spo2: dataToUpdate.spo2,
-        temperature: dataToUpdate.temperature
-          ? dataToUpdate?.temperature?.toString()
-          : null,
-      });
+      return pusher.trigger(
+        [`user-${phoneNumber}`, `user-${deviceId}`],
+        "user-data-changed",
+        {
+          message: "receiving new device data",
+          heartRate: dataToUpdate.heartRate,
+          spo2: dataToUpdate.spo2,
+          temperature: dataToUpdate.temperature
+            ? dataToUpdate?.temperature?.toString()
+            : null,
+        }
+      );
     }
 
     function handleDataToUpdate(dataToUpdate = {}, oldDeviceData) {
