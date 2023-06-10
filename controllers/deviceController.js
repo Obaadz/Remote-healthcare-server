@@ -12,6 +12,12 @@ export default class DeviceController {
     } = await getPatientByDeviceId(device.deviceId);
     const oldDeviceData = await getDeviceData(device.deviceId);
     const isDataToUpdateExist = handleDataToUpdate(device.dataToUpdate, oldDeviceData);
+    const isAbnormalData =
+      device.dataToUpdate.SPO2 < 95 ||
+      device.dataToUpdate.temperature > 37.5 ||
+      device.dataToUpdate.temperature < 36 ||
+      device.dataToUpdate.heartRate > 120 ||
+      device.dataToUpdate.heartRate < 60;
 
     if (!oldDeviceData || !isDataToUpdateExist) {
       failed();
@@ -27,6 +33,33 @@ export default class DeviceController {
         await sendNotificationToAdmins(
           `Patient ${patient.username} is in danger!`,
           "Fall Detected"
+        );
+      } catch (e) {
+        console.log("ERROR ON SENDING NOTIFICATION", e.message);
+      }
+    else if (isAbnormalData)
+      try {
+        const isSPO2Abnormal = device.dataToUpdate.SPO2 < 95,
+          isHeartRateAbnormal =
+            device.dataToUpdate.heartRate < 60 || device.dataToUpdate.heartRate > 120,
+          isTemperatureAbnormal =
+            device.dataToUpdate.temperature > 37.5 ||
+            device.dataToUpdate.temperature < 36;
+
+        let message = ``;
+        message += isSPO2Abnormal ? `Abnormal SPO2: ${device.dataToUpdate.SPO2}\n` : "";
+        message += isHeartRateAbnormal
+          ? `Abnormal HeartRate: ${device.dataToUpdate.heartRate}\n`
+          : "";
+        message += isTemperatureAbnormal
+          ? `Abnormal Temperature: ${device.dataToUpdate.temperature}\n`
+          : "";
+
+        console.log("SENDING NOTIFACTION...");
+
+        await sendNotificationToAdmins(
+          `Patient ${patient.username} is in danger!`,
+          message
         );
       } catch (e) {
         console.log("ERROR ON SENDING NOTIFICATION", e.message);
