@@ -47,7 +47,8 @@ export default class DeviceController {
 
         await sendNotificationToAdmins(
           `Patient ${patient.username} is in danger!`,
-          "Fall Detected"
+          "Fall Detected",
+          "fall"
         );
       } catch (e) {
         console.log("ERROR ON SENDING NOTIFICATION", e.message);
@@ -74,7 +75,8 @@ export default class DeviceController {
 
         await sendNotificationToAdmins(
           `Patient ${patient.username} is in danger!`,
-          message
+          message,
+          "report"
         );
       } catch (e) {
         console.log("ERROR ON SENDING NOTIFICATION", e.message);
