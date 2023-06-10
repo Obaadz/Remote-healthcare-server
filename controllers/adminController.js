@@ -8,6 +8,7 @@ import {
   getAdminById,
   getAdminPatientsById,
   cancelPatientFromAdminByDeviceId,
+  cancelPatientFromAdminByPhoneNumber,
 } from "../services/admins.js";
 import { pusher } from "../index.js";
 
@@ -212,10 +213,12 @@ export default class AdminController {
 
     console.log(req.body);
 
-    const { isSuccess, errMessage } = await cancelPatientFromAdminByDeviceId(
-      req.body.deviceId,
-      req.body.adminEmail
-    );
+    const { isSuccess, errMessage } = req.body.deviceId
+      ? await cancelPatientFromAdminByDeviceId(req.body.deviceId, req.body.adminEmail)
+      : await cancelPatientFromAdminByPhoneNumber(
+          req.body.phoneNumber,
+          req.body.adminEmail
+        );
 
     if (isSuccess) {
       successed();

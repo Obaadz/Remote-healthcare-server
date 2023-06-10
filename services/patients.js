@@ -54,7 +54,24 @@ export const getPatientByDeviceId = async (deviceId) => {
     .then((patient) => {
       if (patient) return [true, "", { patient }];
 
-      return [false, "password is incorrect"];
+      return [false, "error"];
+    })
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage, data };
+};
+
+export const getPatientByPhoneNumber = async (phoneNumber) => {
+  const [isSuccess, errMessage, data] = await Patients.findOne({
+    phoneNumber,
+  })
+    .select("-password -__v -reports")
+    .populate("device", "-_id -updatedAt -__v")
+    .populate("adminsRequests", "-_id -__v -password -patients")
+    .then((patient) => {
+      if (patient) return [true, "", { patient }];
+
+      return [false, "error"];
     })
     .catch((err) => [false, err.message]);
 
