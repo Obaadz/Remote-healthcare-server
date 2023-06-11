@@ -157,10 +157,7 @@ export default class DeviceController {
         dataToUpdate.heartRate = oldDeviceData.heartRate || null;
       if (dataToUpdate.spo2 && (dataToUpdate.spo2 < 95 || dataToUpdate.spo2 > 100))
         dataToUpdate.spo2 = oldDeviceData.spo2 || null;
-      if (
-        dataToUpdate.temperature &&
-        (dataToUpdate.temperature < 37 || dataToUpdate.temperature > 40)
-      )
+      if (dataToUpdate.temperature && dataToUpdate.temperature < 37)
         dataToUpdate.temperature = oldDeviceData.temperature || null;
 
       if (!dataToUpdate.lat) {
