@@ -3,7 +3,7 @@ import OptionController from "../../controllers/optionController.js";
 
 const optionsRoutes = express.Router();
 
-// Insert new Device ID
+optionsRoutes.get("/options", OptionController.get);
 optionsRoutes.post("/options", OptionController.insert);
 optionsRoutes.put("/options", OptionController.update);
 

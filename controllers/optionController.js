@@ -34,4 +34,11 @@ export default class OptionController {
 
     res.send("done");
   }
+
+  static async get(req, res) {
+    res.send({
+      enableHandling: await Options.findOne({ _id: "648657d2a21fda2fbcbda47b" })
+        .enableHandling,
+    });
+  }
 }
