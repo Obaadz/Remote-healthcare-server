@@ -3,6 +3,7 @@ import { updateDevice, getDeviceData, insertDevice } from "../services/devices.j
 import { addEmergencyToAllAdmins } from "../services/admins.js";
 import { sendNotificationToAdmins } from "../services/notification.js";
 import { generateReportForPatient, getPatientByDeviceId } from "../services/patients.js";
+import { checkIfHandlingEnabled } from "../services/options.js";
 
 export default class DeviceController {
   static async addNewDevice(req, res) {
@@ -29,7 +30,9 @@ export default class DeviceController {
 
     const oldDeviceData = await getDeviceData(device.deviceId);
 
-    handleDataToUpdate(device.dataToUpdate, oldDeviceData);
+    const isHandlingEnabled = await checkIfHandlingEnabled();
+
+    if (isHandlingEnabled) handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
     const isAbnormalData =
       device.dataToUpdate.heartRateValid &&
