@@ -120,7 +120,9 @@ export const cancelPatientFromAdminByPhoneNumber = async (phoneNumber, adminEmai
 
 export const getPatientAdminsByDeviceId = async (deviceId) => {
   const patientDevice = await getDeviceByDeviceId(deviceId);
-  const patient = await Patients.findOne({ device: patientDevice._id });
+  const patient = await Patients.findOne({ device: patientDevice._id }).populate(
+    "device"
+  );
 
   const adminsForPatient = await Admins.find({ patients: { $in: [patient._id] } }).select(
     "-password -__v -player_id -patients"
@@ -156,6 +158,20 @@ export const getAdminById = async (id, includePatients = false) => {
     .then((admin) => {
       console.log("getAdminById");
       console.log(admin.emergencies);
+
+      return [true, "", { admin }];
+    })
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage, data };
+};
+
+export const getAdminByIdNoPatients = async (id) => {
+  const [isSuccess, errMessage, data] = await Admins.findById(id)
+    .select(`-password -__v -player_id -patients`)
+    .then((admin) => {
+      console.log("getAdminByIdNoPatients");
+      console.log("my emergencies is: ", admin.emergencies);
 
       return [true, "", { admin }];
     })

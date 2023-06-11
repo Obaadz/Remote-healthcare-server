@@ -9,6 +9,7 @@ import {
   getAdminPatientsById,
   cancelPatientFromAdminByDeviceId,
   cancelPatientFromAdminByPhoneNumber,
+  getAdminByIdNoPatients,
 } from "../services/admins.js";
 import { pusher } from "../index.js";
 
@@ -239,7 +240,9 @@ export default class AdminController {
 
     console.log("ID :", id);
     console.log("IncludePatients :", includePatients);
-    const { isSuccess, errMessage, data } = await getAdminById(id, includePatients == 1);
+    const { isSuccess, errMessage, data } = includePatients
+      ? await getAdminById(id, includePatients == 1)
+      : await getAdminByIdNoPatients(id);
 
     if (isSuccess) successed(data);
     else failed(errMessage);
