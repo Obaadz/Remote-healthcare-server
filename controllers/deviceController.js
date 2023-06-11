@@ -133,6 +133,11 @@ export default class DeviceController {
         dataToUpdate.spo2 = -999;
         dataToUpdate.heartRate = -999;
         dataToUpdate.temperature = "-999";
+      } else if (!dataToUpdate.spo2 || !dataToUpdate.temperature) {
+        if (!dataToUpdate.spo2) dataToUpdate.spo2 = oldDeviceData.spo2;
+
+        if (!dataToUpdate.temperature)
+          dataToUpdate.temperature = oldDeviceData.temperature;
       }
 
       return pusher.trigger(
