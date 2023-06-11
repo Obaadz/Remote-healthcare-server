@@ -29,7 +29,7 @@ export default class DeviceController {
 
     const oldDeviceData = await getDeviceData(device.deviceId);
 
-    // handleDataToUpdate(device.dataToUpdate, oldDeviceData);
+    handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
     const isAbnormalData =
       device.dataToUpdate.heartRateValid &&
@@ -83,7 +83,7 @@ export default class DeviceController {
           message
         );
 
-        await generateReportForPatient(patient);
+        await generateReportForPatient(patient, device.dataToUpdate);
       } catch (e) {
         console.log("ERROR ON SENDING NOTIFICATION", e.message);
       }
