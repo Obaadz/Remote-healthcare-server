@@ -44,8 +44,6 @@ export default class DeviceController {
       failed();
       return;
     }
-    const { errMessage: errMessages } = await addEmergencyToAllAdmins(device.deviceId);
-    console.log(errMessages);
 
     if (device.dataToUpdate.fall)
       try {
