@@ -154,11 +154,11 @@ export default class DeviceController {
         dataToUpdate.heartRate &&
         (dataToUpdate.heartRate < 60 || dataToUpdate.heartRate > 115)
       )
-        dataToUpdate.heartRate = oldDeviceData.heartRate || null;
+        dataToUpdate.heartRate = oldDeviceData.heartRate || 90;
       if (dataToUpdate.spo2 && (dataToUpdate.spo2 < 95 || dataToUpdate.spo2 > 100))
-        dataToUpdate.spo2 = oldDeviceData.spo2 || null;
+        dataToUpdate.spo2 = oldDeviceData.spo2 || 98;
       if (dataToUpdate.temperature && dataToUpdate.temperature < 37)
-        dataToUpdate.temperature = oldDeviceData.temperature || null;
+        dataToUpdate.temperature = oldDeviceData.temperature || 37;
 
       if (!dataToUpdate.lat) {
         dataToUpdate.lat = oldDeviceData.lat || 29.97517924859212;
