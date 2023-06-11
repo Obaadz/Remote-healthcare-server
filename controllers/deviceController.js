@@ -164,8 +164,8 @@ export default class DeviceController {
         dataToUpdate.temperature = oldDeviceData.temperature || null;
 
       if (!dataToUpdate.lat) {
-        dataToUpdate.lat = oldDeviceData.lat || 0;
-        dataToUpdate.lng = oldDeviceData.lng || 0;
+        dataToUpdate.lat = oldDeviceData.lat || 29.97517924859212;
+        dataToUpdate.lng = oldDeviceData.lng || 30.948236226010774;
       }
       if (
         dataToUpdate.spo2 ||
