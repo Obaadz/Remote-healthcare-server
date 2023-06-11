@@ -238,7 +238,7 @@ export default class AdminController {
     const { includePatients } = req.query;
 
     console.log("ID :", id);
-
+    console.log("IncludePatients :", includePatients);
     const { isSuccess, errMessage, data } = await getAdminById(id, includePatients == 1);
 
     if (isSuccess) successed(data);

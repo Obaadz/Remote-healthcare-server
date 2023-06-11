@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Admins from "../models/admin.js";
 import Patients from "../models/patient.js";
 import { getDeviceByDeviceId } from "./devices.js";
@@ -119,21 +120,21 @@ export const cancelPatientFromAdminByPhoneNumber = async (phoneNumber, adminEmai
 
 export const getPatientAdminsByDeviceId = async (deviceId) => {
   const patientDevice = await getDeviceByDeviceId(deviceId);
-  const patient = await Patients.exists({ device: patientDevice._id });
+  const patient = await Patients.findOne({ device: patientDevice._id });
 
   const adminsForPatient = await Admins.find({ patients: { $in: [patient._id] } }).select(
     "-password -__v -player_id -patients"
   );
 
-  return { adminsForPatient, patientObjId: patient._id };
+  return { adminsForPatient, patient };
 };
 
 export const addEmergencyToAllAdmins = async (deviceId) => {
-  const { adminsForPatient, patientObjId } = await getPatientAdminsByDeviceId(deviceId);
+  const { adminsForPatient, patient } = await getPatientAdminsByDeviceId(deviceId);
 
   const [isSuccess, errMessage] = await Admins.updateMany(
     { _id: { $in: adminsForPatient } },
-    { $push: { emergencies: { $clone: patientObjId } } }
+    { $push: { emergencies: { ...patient } } }
   )
     .then(() => [true, ""])
     .catch((err) => [false, "Error in adding emergency"]);
