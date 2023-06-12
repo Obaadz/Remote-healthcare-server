@@ -162,14 +162,14 @@ export default class DeviceController {
         dataToUpdate.spo2 = -999;
         dataToUpdate.heartRate = -999;
         dataToUpdate.temperature = "-999";
-      } else if (dataToUpdate.heartRateValid && dataToUpdate.SPO2Valid)
-        await setCounterToZero();
+      }
+
+      if (dataToUpdate.heartRateValid || dataToUpdate.SPO2Valid) await setCounterToZero();
 
       if (
         (dataToUpdate.heartRateValid && !dataToUpdate.SPO2Valid) ||
         (dataToUpdate.SPO2Valid && !dataToUpdate.heartRateValid)
       ) {
-        await setCounterToZero();
         dataToUpdate.heartRate = oldDeviceData.heartRate;
         dataToUpdate.spo2 = oldDeviceData.spo2;
         dataToUpdate.temperature = oldDeviceData.temperature;
