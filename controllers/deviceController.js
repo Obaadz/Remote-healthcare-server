@@ -23,7 +23,7 @@ export default class DeviceController {
 
   static async update(req, res) {
     const device = req.body;
-
+    // deviceId , dataToUpdate
     const {
       data: { patient },
     } = await getPatientByDeviceId(device.deviceId, true);
@@ -150,10 +150,19 @@ export default class DeviceController {
     }
 
     function sendDataToClient(deviceId, phoneNumber, dataToUpdate) {
-      if (!dataToUpdate.heartRateValid || !dataToUpdate.SPO2Valid) {
+      if (!dataToUpdate.heartRateValid && !dataToUpdate.SPO2Valid) {
         dataToUpdate.spo2 = -999;
         dataToUpdate.heartRate = -999;
         dataToUpdate.temperature = "-999";
+      }
+
+      if (
+        (dataToUpdate.heartRateValid && !dataToUpdate.SPO2Valid) ||
+        (dataToUpdate.SPO2Valid && !dataToUpdate.heartRateValid)
+      ) {
+        dataToUpdate.heartRate = oldDeviceData.heartRate;
+        dataToUpdate.spo2 = oldDeviceData.spo2;
+        dataToUpdate.temperature = oldDeviceData.temperature;
       }
 
       return pusher.trigger(
