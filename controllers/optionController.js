@@ -14,7 +14,7 @@ export default class OptionController {
   static async update(req, res) {
     const enableHandling = req.body.enableHandling;
 
-    Options.updateOne(
+    await Options.updateOne(
       { _id: "648657d2a21fda2fbcbda47b" },
       {
         enableHandling,
