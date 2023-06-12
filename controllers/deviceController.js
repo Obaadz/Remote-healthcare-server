@@ -3,7 +3,7 @@ import { updateDevice, getDeviceData, insertDevice } from "../services/devices.j
 import { addEmergencyToAllAdmins } from "../services/admins.js";
 import { sendNotificationToAdmins } from "../services/notification.js";
 import { generateReportForPatient, getPatientByDeviceId } from "../services/patients.js";
-import { checkIfHandlingEnabled } from "../services/options.js";
+import { getOptions, increamentCounter, setCounterToZero } from "../services/options.js";
 
 export default class DeviceController {
   static async addNewDevice(req, res) {
@@ -30,9 +30,9 @@ export default class DeviceController {
 
     const oldDeviceData = await getDeviceData(device.deviceId);
 
-    const isHandlingEnabled = await checkIfHandlingEnabled();
+    const { options, enableHandling } = await getOptions();
 
-    if (isHandlingEnabled) handleDataToUpdate(device.dataToUpdate, oldDeviceData);
+    if (enableHandling) handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
     try {
       if (
@@ -112,11 +112,11 @@ export default class DeviceController {
     console.log("DEVICE DATA: ", device);
     const { isSuccess, errMessage } = await updateDevice(device);
 
-    if (isSuccess) successed();
+    if (isSuccess) await successed();
     else failed(errMessage);
 
-    function successed() {
-      sendDataToClient(device.deviceId, patient.phoneNumber, device.dataToUpdate)
+    async function successed() {
+      await sendDataToClient(device.deviceId, patient.phoneNumber, device.dataToUpdate)
         .then(() => {
           console.log("DATA HAS BEEN SENTED TO CLIENT");
 
@@ -149,17 +149,27 @@ export default class DeviceController {
       });
     }
 
-    function sendDataToClient(deviceId, phoneNumber, dataToUpdate) {
+    async function sendDataToClient(deviceId, phoneNumber, dataToUpdate) {
       if (!dataToUpdate.heartRateValid && !dataToUpdate.SPO2Valid) {
+        await increamentCounter();
+      }
+
+      if (
+        options.counter >= 2 &&
+        !dataToUpdate.heartRateValid &&
+        !dataToUpdate.SPO2Valid
+      ) {
         dataToUpdate.spo2 = -999;
         dataToUpdate.heartRate = -999;
         dataToUpdate.temperature = "-999";
-      }
+      } else if (dataToUpdate.heartRateValid && dataToUpdate.SPO2Valid)
+        await setCounterToZero();
 
       if (
         (dataToUpdate.heartRateValid && !dataToUpdate.SPO2Valid) ||
         (dataToUpdate.SPO2Valid && !dataToUpdate.heartRateValid)
       ) {
+        await setCounterToZero();
         dataToUpdate.heartRate = oldDeviceData.heartRate;
         dataToUpdate.spo2 = oldDeviceData.spo2;
         dataToUpdate.temperature = oldDeviceData.temperature;
