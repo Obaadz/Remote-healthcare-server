@@ -34,6 +34,24 @@ export default class DeviceController {
 
     if (isHandlingEnabled) handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
+    try {
+      if (
+        !device.dataToUpdate.spo2 ||
+        !device.dataToUpdate.temperature ||
+        !device.dataToUpdate.heartRate
+      ) {
+        if (!device.dataToUpdate.spo2) device.dataToUpdate.spo2 = oldDeviceData.spo2;
+
+        if (!device.dataToUpdate.temperature)
+          device.dataToUpdate.temperature = oldDeviceData.temperature;
+
+        if (!device.dataToUpdate.heartRate)
+          device.dataToUpdate.heartRate = oldDeviceData.heartRate;
+      }
+    } catch (err) {
+      console.log("error on device update controller:", err.message);
+    }
+
     const isAbnormalData =
       device.dataToUpdate.heartRateValid &&
       device.dataToUpdate.SPO2Valid &&
@@ -136,11 +154,6 @@ export default class DeviceController {
         dataToUpdate.spo2 = -999;
         dataToUpdate.heartRate = -999;
         dataToUpdate.temperature = "-999";
-      } else if (!dataToUpdate.spo2 || !dataToUpdate.temperature) {
-        if (!dataToUpdate.spo2) dataToUpdate.spo2 = oldDeviceData.spo2;
-
-        if (!dataToUpdate.temperature)
-          dataToUpdate.temperature = oldDeviceData.temperature;
       }
 
       return pusher.trigger(
