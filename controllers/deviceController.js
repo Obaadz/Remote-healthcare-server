@@ -47,6 +47,14 @@ export default class DeviceController {
 
         if (!device.dataToUpdate.heartRate)
           device.dataToUpdate.heartRate = oldDeviceData.heartRate;
+
+        if (!device.dataToUpdate.lat || !device.dataToUpdate.lng) {
+          device.dataToUpdate.lat = oldDeviceData.lat || 29.97517924859212;
+          device.dataToUpdate.lng = oldDeviceData.lng || 30.948236226010774;
+        }
+
+        if (device.heartRateForceChange)
+          device.dataToUpdate.heartRate = device.newheartRate;
       }
     } catch (err) {
       console.log("error on device update controller:", err.message);
