@@ -23,7 +23,9 @@ export default class DeviceController {
 
   static async update(req, res) {
     const device = req.body;
-    // deviceId , dataToUpdate
+
+    console.log("DEVICE ON UPDATE METHOD BEFORE:", device);
+
     const {
       data: { patient },
     } = await getPatientByDeviceId(device.deviceId, true);
@@ -52,13 +54,12 @@ export default class DeviceController {
           device.dataToUpdate.lat = oldDeviceData.lat || 29.97517924859212;
           device.dataToUpdate.lng = oldDeviceData.lng || 30.948236226010774;
         }
-
-        if (device.heartRateForceChange)
-          device.dataToUpdate.heartRate = device.newheartRate;
       }
     } catch (err) {
       console.log("error on device update controller:", err.message);
     }
+
+    if (device.heartRateForceChange) device.dataToUpdate.heartRate = device.newHeartRate;
 
     const isAbnormalData =
       device.dataToUpdate.heartRateValid &&
