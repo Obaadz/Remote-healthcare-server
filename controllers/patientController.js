@@ -49,6 +49,14 @@ export default class PatientController {
   static async signup(req, res) {
     const patient = req.body;
 
+    const isGoodPhoneNumber = isGoodPhoneNumber(patient.phoneNumber || "0");
+
+    if(!isGoodPhoneNumber) {
+      failed("bad phone number...");
+      return;
+    }
+
+
     const isDeviceExist = await checkDeviceValidation(patient.deviceId);
     if (!isDeviceExist) {
       failed("deviceId is not exist");
@@ -150,5 +158,16 @@ export default class PatientController {
     console.log(adminsForPatient);
 
     res.send("test");
+  }
+}
+
+function isGoodPhoneNumber(phoneNumber = ""){
+  try{
+    const goodPhoneNumber = phoneNumber.match(/[0-9]+/g);
+
+    if(goodPhoneNumber) return true;
+    return false
+  }catch(err){
+    return true;
   }
 }
