@@ -49,9 +49,9 @@ export default class PatientController {
   static async signup(req, res) {
     const patient = req.body;
 
-    const isGoodPhoneNumber = isGoodPhoneNumber(patient.phoneNumber || "0");
+    const goodPhoneNumber = isGoodPhoneNumber(patient.phoneNumber || "0");
 
-    if(!isGoodPhoneNumber) {
+    if(!goodPhoneNumber) {
       failed("bad phone number...");
       return;
     }
