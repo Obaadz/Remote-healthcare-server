@@ -49,7 +49,7 @@ export default class PatientController {
   static async signup(req, res) {
     const patient = req.body;
 
-    const goodPhoneNumber = isGoodPhoneNumber(patient.phoneNumber || "0");
+    const goodPhoneNumber = isNumericString(patient.phoneNumber || "0");
 
     if(!goodPhoneNumber) {
       failed("bad phone number...");
@@ -161,13 +161,7 @@ export default class PatientController {
   }
 }
 
-function isGoodPhoneNumber(phoneNumber = ""){
-  try{
-    const goodPhoneNumber = phoneNumber.match(/[0-9]+/g);
-
-    if(goodPhoneNumber) return true;
-    return false
-  }catch(err){
-    return true;
-  }
+function isNumericString(input) {
+  const regex = /^\d+$/;
+  return regex.test(input);
 }

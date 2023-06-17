@@ -17,6 +17,12 @@ export default class AdminController {
   static async signup(req, res) {
     const admin = req.body;
 
+    const goodPhoneNumber = isNumericString(admin.phoneNumber || "0");
+
+    if(!goodPhoneNumber) {
+      failed("bad phone number...");
+      return;
+    }
     const { isSuccess, errMessage } = await insertAdmin(admin);
 
     if (isSuccess) successed();
@@ -286,4 +292,9 @@ export default class AdminController {
       });
     }
   }
+}
+
+function isNumericString(input) {
+  const regex = /^\d+$/;
+  return regex.test(input);
 }
