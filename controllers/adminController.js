@@ -24,11 +24,6 @@ export default class AdminController {
       return;
     }
 
-    if(!Number.isInteger(admin.age) || admin.age < 0 || admin.age > 100) {
-      failed("wrong age...");
-      return;
-    }
-
     const { isSuccess, errMessage } = await insertAdmin(admin);
 
     if (isSuccess) successed();
