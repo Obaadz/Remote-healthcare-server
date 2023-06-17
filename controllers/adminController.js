@@ -10,8 +10,10 @@ import {
   cancelPatientFromAdminByDeviceId,
   cancelPatientFromAdminByPhoneNumber,
   getAdminByIdNoPatients,
+  deleteAdminById,
 } from "../services/admins.js";
 import { pusher } from "../index.js";
+import { deleteAdminRequestInPatientByAdminId } from "../services/patients.js";
 
 export default class AdminController {
   static async signup(req, res) {
@@ -19,14 +21,14 @@ export default class AdminController {
 
     const goodPhoneNumber = isNumericString(admin.phoneNumber || "0");
 
-    if(!goodPhoneNumber) {
+    if (!goodPhoneNumber) {
       failed("bad phone number...");
       return;
     }
 
-    const goodAge = isGoodAge(Number(admin.age) || 25)
+    const goodAge = isGoodAge(Number(admin.age) || 25);
 
-    if(!goodAge) {
+    if (!goodAge) {
       failed("wrong age...");
       return;
     }
@@ -298,6 +300,26 @@ export default class AdminController {
         message: `admin search failed: ${errMessage}`,
         isSuccess: false,
       });
+    }
+  }
+
+  static async deleteOneById(req, res) {
+    const adminId = req.body.id;
+
+    try {
+      const {
+        isSuccess: isDeleteAdminForAllPatientsSuccess,
+        errMessage: errMessageForDeleteAdminForAllPatients,
+      } = await deleteAdminRequestInPatientByAdminId(adminId);
+
+      const { isSuccess: isDeleteAdminSuccess, errMessage: errMessageForDeleteAdmin } =
+        await deleteAdminById(adminId);
+
+      if (!isDeleteAdminSuccess) throw new Error(errMessageForDeleteAdmin);
+
+      res.send({ isSuccess: true, message: "OK" });
+    } catch (err) {
+      res.send({ isSuccess: false, message: err.message | "error occured..." });
     }
   }
 }

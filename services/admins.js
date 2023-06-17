@@ -204,3 +204,11 @@ export const deletePatientForAllAdmins = async (patientId) => {
 
   return { isSuccess, errMessage };
 };
+
+export const deleteAdminById = async (id) => {
+  const [isSuccess, errMessage] = await Admins.deleteOne({ _id: id })
+    .then(() => [true, ""])
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage };
+};

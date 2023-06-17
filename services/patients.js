@@ -204,9 +204,21 @@ export const deletePatientById = async (id) => {
     .then(() => [true, ""])
     .catch((err) => [false, err.message]);
 
-    return {isSuccess, errMessage}
+  return { isSuccess, errMessage };
 };
 
+export const deleteAdminRequestInPatientByAdminId = async (id) => {
+  const [isSuccess, errMessage] = await Patients.updateMany(
+    {},
+    {
+      $pull: { adminsRequests: id },
+    }
+  )
+    .then(() => [true, ""])
+    .catch((err) => [false, err.message]);
+
+  return { isSuccess, errMessage };
+};
 // Utils functions for patients:
 
 /**
