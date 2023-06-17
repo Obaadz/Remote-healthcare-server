@@ -26,7 +26,7 @@ export default class AdminController {
       return;
     }
 
-    const goodAge = isGoodAge(Number(admin.age) || 25);
+    const goodAge = isGoodAge(Number(admin.age));
 
     if (!goodAge) {
       failed("wrong age...");

@@ -60,7 +60,7 @@ export default class PatientController {
       return;
     }
 
-    const goodAge = isGoodAge(Number(patient.age) || 25);
+    const goodAge = isGoodAge(Number(patient.age));
 
     if (!goodAge) {
       failed("wrong age...");
