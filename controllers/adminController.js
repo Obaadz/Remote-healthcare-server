@@ -24,6 +24,13 @@ export default class AdminController {
       return;
     }
 
+    const goodAge = isGoodAge(admin.age || 25)
+
+    if(!goodAge) {
+      failed("wrong age...");
+      return;
+    }
+
     const { isSuccess, errMessage } = await insertAdmin(admin);
 
     if (isSuccess) successed();
@@ -298,4 +305,8 @@ export default class AdminController {
 function isNumericString(input) {
   const regex = /^\d+$/;
   return regex.test(input);
+}
+
+function isGoodAge(age) {
+  return Number.isInteger(age) && age > 0 && age < 100;
 }

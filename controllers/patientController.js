@@ -56,6 +56,13 @@ export default class PatientController {
       return;
     }
 
+    const goodAge = isGoodAge(patient.age || 25)
+
+    if(!goodAge) {
+      failed("wrong age...");
+      return;
+    }
+
     const isDeviceExist = await checkDeviceValidation(patient.deviceId);
     if (!isDeviceExist) {
       failed("deviceId is not exist");
@@ -163,4 +170,8 @@ export default class PatientController {
 function isNumericString(input) {
   const regex = /^\d+$/;
   return regex.test(input);
+}
+
+function isGoodAge(age) {
+  return Number.isInteger(age) && age > 0 && age < 100;
 }
