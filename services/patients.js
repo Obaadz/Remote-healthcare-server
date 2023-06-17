@@ -202,7 +202,7 @@ export const generateReportForPatient = async (patient, dataToUpdate) => {
 export const deletePatientById = async (id) => {
   const [isSuccess, errMessage] = await Patients.deleteOne({ _id: id })
     .then(() => [true, ""])
-    .catch((err) => [false, err.message]);
+    .catch((err) => [false, "patient already deleted"]);
 
   return { isSuccess, errMessage };
 };
@@ -215,7 +215,7 @@ export const deleteAdminRequestInPatientByAdminId = async (id) => {
     }
   )
     .then(() => [true, ""])
-    .catch((err) => [false, err.message]);
+    .catch((err) => [false, "already deleted"]);
 
   return { isSuccess, errMessage };
 };

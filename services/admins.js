@@ -200,7 +200,9 @@ export const deletePatientForAllAdmins = async (patientId) => {
     {
       $pull: { patients: patientId, emergencies: { _id: patientId } },
     }
-  ).then(() => [true, ""].catch((err) => [false, err.message]));
+  ).then(() =>
+    [true, ""].catch((err) => [false, "patient already deleted in all admins"])
+  );
 
   return { isSuccess, errMessage };
 };
@@ -208,7 +210,7 @@ export const deletePatientForAllAdmins = async (patientId) => {
 export const deleteAdminById = async (id) => {
   const [isSuccess, errMessage] = await Admins.deleteOne({ _id: id })
     .then(() => [true, ""])
-    .catch((err) => [false, err.message]);
+    .catch((err) => [false, "admin already deleted"]);
 
   return { isSuccess, errMessage };
 };
