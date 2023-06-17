@@ -23,6 +23,12 @@ export default class AdminController {
       failed("bad phone number...");
       return;
     }
+
+    if(!Number.isInteger(admin.age) && patient.age > 0 && patient.age < 100) {
+      failed("wrong age...");
+      return;
+    }
+
     const { isSuccess, errMessage } = await insertAdmin(admin);
 
     if (isSuccess) successed();
