@@ -179,15 +179,16 @@ export default class PatientController {
         errMessage: errMessageForDeletePatientForAllAdmins,
       } = await deletePatientForAllAdmins(patientId);
 
-      if (!isDeletePatientForAllAdminsSuccess)
-        throw new Error(errMessageForDeletePatientForAllAdmins);
+      // if (!isDeletePatientForAllAdminsSuccess)
+      //   throw new Error(errMessageForDeletePatientForAllAdmins);
 
       const {
         isSuccess: isDeletePatientSuccess,
         errMessage: errMessageForDeletePatient,
       } = await deletePatientById(patientId);
 
-      if (!isDeletePatientSuccess) throw new Error(errMessageForDeletePatient);
+      if (!isDeletePatientSuccess)
+        throw new Error(errMessageForDeletePatient || "already deleted");
 
       res.send({ isSuccess: true, message: "OK" });
     } catch (err) {

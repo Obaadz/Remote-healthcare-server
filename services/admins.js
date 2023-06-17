@@ -200,9 +200,9 @@ export const deletePatientForAllAdmins = async (patientId) => {
     {
       $pull: { patients: patientId, emergencies: { _id: patientId } },
     }
-  ).then(() =>
-    [true, ""].catch((err) => [false, "patient already deleted in all admins"])
-  );
+  )
+    .then(() => [true, ""])
+    .catch((err) => [false, "patient already deleted in all admins"]);
 
   return { isSuccess, errMessage };
 };
