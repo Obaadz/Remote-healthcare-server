@@ -193,3 +193,14 @@ export const getAdminPatientsById = async (id) => {
 
   return { isSuccess, errMessage, data };
 };
+
+export const deletePatientForAllAdmins = async (patientId) => {
+  const { isSuccess, errMessage } = await Admins.updateMany(
+    {},
+    {
+      $pull: { patients: patientId, emergencies: { _id: patientId } },
+    }
+  ).then(() => [true, ""].catch((err) => [false, err.message]));
+
+  return { isSuccess, errMessage };
+};

@@ -17,6 +17,8 @@ patientsRoutes.post("/users/patients/signin", PatientController.signin);
 
 patientsRoutes.get("/users/patients", PatientController.searchByDeviceId);
 
+adminsRoutes.post("/users/patients/delete", PatientController.deleteOneById)
+
 adminsRoutes.post("/users/admins/signup", AdminController.signup);
 
 adminsRoutes.post("/users/admins/signin", AdminController.signin);
@@ -34,5 +36,6 @@ adminsRoutes.put("/users/admins/request_patient/accept", AdminController.request
 adminsRoutes.get("/users/admins", AdminController.getOneById);
 
 adminsRoutes.get("/users/admins/patients", AdminController.getPatientsByAdminId);
+
 
 export { patientsRoutes, adminsRoutes };

@@ -1,5 +1,8 @@
 import { checkDeviceValidation } from "../services/devices.js";
-import { getPatientAdminsByDeviceId } from "../services/admins.js";
+import {
+  deletePatientForAllAdmins,
+  getPatientAdminsByDeviceId,
+} from "../services/admins.js";
 import {
   getPatientByDeviceIdAndPassword,
   insertPatient,
@@ -7,6 +10,7 @@ import {
   filterPatientsAlreadyAddedByAdminEmail,
   getPatientByPatientId,
   generateReportsForAllPatients,
+  deletePatientById,
 } from "../services/patients.js";
 
 export default class PatientController {
@@ -51,14 +55,14 @@ export default class PatientController {
 
     const goodPhoneNumber = isNumericString(patient.phoneNumber || "0");
 
-    if(!goodPhoneNumber) {
+    if (!goodPhoneNumber) {
       failed("bad phone number...");
       return;
     }
 
-    const goodAge = isGoodAge(Number(patient.age) || 25)
+    const goodAge = isGoodAge(Number(patient.age) || 25);
 
-    if(!goodAge) {
+    if (!goodAge) {
       failed("wrong age...");
       return;
     }
@@ -164,6 +168,31 @@ export default class PatientController {
     console.log(adminsForPatient);
 
     res.send("test");
+  }
+
+  static async deleteOneById(req, res) {
+    const patientId = req.body.id;
+
+    try {
+      const {
+        isSuccess: isDeletePatientForAllAdminsSuccess,
+        errMessage: errMessageForDeletePatientForAllAdmins,
+      } = await deletePatientForAllAdmins(patientId);
+
+      if (!isDeletePatientForAllAdminsSuccess)
+        throw new Error(errMessageForDeletePatientForAllAdmins);
+
+      const {
+        isSuccess: isDeletePatientSuccess,
+        errMessage: errMessageForDeletePatient,
+      } = await deletePatientById(patientId);
+
+      if (!isDeletePatientSuccess) throw new Error(errMessageForDeletePatient);
+
+      res.send({ isSuccess: true, message: "OK" });
+    } catch (err) {
+      res.send({ isSuccess: false, message: err.message | "error occured..." });
+    }
   }
 }
 
