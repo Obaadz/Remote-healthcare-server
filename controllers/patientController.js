@@ -56,7 +56,7 @@ export default class PatientController {
       return;
     }
 
-    if(Number.isInteger(patient.age) && patient.age > 0 && patient.age < 100) {
+    if(!Number.isInteger(patient.age) && patient.age > 0 && patient.age < 100) {
       failed("wrong age...");
       return;
     }
