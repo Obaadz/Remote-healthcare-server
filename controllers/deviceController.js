@@ -30,9 +30,9 @@ export default class DeviceController {
 
     const oldDeviceData = await getDeviceData(device.deviceId);
 
-    const { options, enableHandling } = await getOptions();
-
-    if (enableHandling) handleDataToUpdate(device.dataToUpdate, oldDeviceData);
+    const { options } = await getOptions();
+const EnableHandling = true;
+    if (true) handleDataToUpdate(device.dataToUpdate, oldDeviceData);
 
     try {
       if (
