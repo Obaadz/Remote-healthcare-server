@@ -2,7 +2,7 @@ import Options from "../models/option.js";
 
 export async function getOptions() {
   try {
-    const options = await Options.findOne({ _id: "648657d2a21fda2fbcbda47b" });
+    const options = await Options.findOne({ _id: "648ebdfc31c63b60791844c7" });
     return { options, enableHandling: options.enableHandling };
   } catch (err) {
     return { options: {}, enableHandling: true };
