@@ -24,8 +24,6 @@ export default class DeviceController {
   static async update(req, res) {
     const device = req.body;
 
-    console.log("DEVICE ON UPDATE METHOD BEFORE:", device);
-
     const {
       data: { patient },
     } = await getPatientByDeviceId(device.deviceId, true);
